@@ -1,0 +1,9 @@
+{
+  "provider": "Alibaba Cloud Model Studio",
+  "model": "qwen3-tts-instruct-flash-2026-01-26",
+  "voice": "Cherry",
+  "instructions": "用自然、温暖的成年女性声音给小朋友讲绘本。普通话清楚，语速略慢，短句间轻轻停顿，亲切而轻快。卡布是小朋友的名字，读作kǎ bù。不要刻意夹嗓子，不要播音腔，也不要夸张兴奋。",
+  "format": "MP3 mono 44100 Hz 128 kbps, normalized to -19 LUFS",
+  "generatedAt": "2026-10-04T07:57:51.021Z",
+  "documentation": "https://help.aliyun.com/zh/model-studio/qwen-tts-api"
+}
