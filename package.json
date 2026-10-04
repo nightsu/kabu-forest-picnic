@@ -6,13 +6,17 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev --host 127.0.0.1",
-    "build": "tsc --noEmit && vp build",
+    "build": "node scripts/verify-audio.mjs && tsc --noEmit && vp build",
     "preview": "vp preview --host 127.0.0.1",
     "check": "vp check && tsc --noEmit",
     "format": "vp fmt",
     "test": "vp test run",
     "test:e2e": "node tests/browser.mjs",
-    "deploy": "node scripts/deploy.mjs"
+    "deploy": "node scripts/deploy.mjs",
+    "audio:plan": "node scripts/generate-voices.mjs",
+    "audio:generate": "node scripts/generate-voices.mjs --generate",
+    "audio:check": "node scripts/verify-audio.mjs",
+    "test:audio": "node tests/audio-browser.mjs"
   },
   "dependencies": {
     "motion": "14.0.0",

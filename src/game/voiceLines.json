@@ -1,0 +1,302 @@
+[
+  {
+    "id": "chapter-0",
+    "message": "卡布，点一点你想带的食物吧！",
+    "text": "卡布，点一点你想带的食物吧！"
+  },
+  {
+    "id": "chapter-1",
+    "message": "点点花丛、池塘和树洞，和小伙伴打个招呼吧。",
+    "text": "点点花丛、池塘和树洞，和小伙伴打个招呼吧。"
+  },
+  {
+    "id": "chapter-2",
+    "message": "先选一样食物，再点一位小动物，就能分享啦。",
+    "text": "先选一样食物，再点一位小动物，就能分享啦。"
+  },
+  {
+    "id": "chapter-3",
+    "message": "咔嚓！谢谢卡布，今天真开心。挥挥手，我们下次再见！",
+    "text": "咔嚓！谢谢卡布，今天真开心。挥挥手，我们下次再见！"
+  },
+  {
+    "id": "pack-apple",
+    "message": "苹果装好啦！还想带什么呢？",
+    "text": "苹果装好啦！"
+  },
+  {
+    "id": "unpack-apple",
+    "message": "苹果先留在这里。还想带什么呢？",
+    "text": "苹果先留在这里。"
+  },
+  {
+    "id": "select-apple",
+    "message": "想把苹果分享给谁呢？点点小动物吧。",
+    "text": "想把苹果分享给谁呢？"
+  },
+  {
+    "id": "pack-banana",
+    "message": "香蕉装好啦！还想带什么呢？",
+    "text": "香蕉装好啦！"
+  },
+  {
+    "id": "unpack-banana",
+    "message": "香蕉先留在这里。还想带什么呢？",
+    "text": "香蕉先留在这里。"
+  },
+  {
+    "id": "select-banana",
+    "message": "想把香蕉分享给谁呢？点点小动物吧。",
+    "text": "想把香蕉分享给谁呢？"
+  },
+  {
+    "id": "pack-bread",
+    "message": "面包装好啦！还想带什么呢？",
+    "text": "面包装好啦！"
+  },
+  {
+    "id": "unpack-bread",
+    "message": "面包先留在这里。还想带什么呢？",
+    "text": "面包先留在这里。"
+  },
+  {
+    "id": "select-bread",
+    "message": "想把面包分享给谁呢？点点小动物吧。",
+    "text": "想把面包分享给谁呢？"
+  },
+  {
+    "id": "pack-strawberry",
+    "message": "草莓装好啦！还想带什么呢？",
+    "text": "草莓装好啦！"
+  },
+  {
+    "id": "unpack-strawberry",
+    "message": "草莓先留在这里。还想带什么呢？",
+    "text": "草莓先留在这里。"
+  },
+  {
+    "id": "select-strawberry",
+    "message": "想把草莓分享给谁呢？点点小动物吧。",
+    "text": "想把草莓分享给谁呢？"
+  },
+  {
+    "id": "pack-carrot",
+    "message": "胡萝卜装好啦！还想带什么呢？",
+    "text": "胡萝卜装好啦！"
+  },
+  {
+    "id": "unpack-carrot",
+    "message": "胡萝卜先留在这里。还想带什么呢？",
+    "text": "胡萝卜先留在这里。"
+  },
+  {
+    "id": "select-carrot",
+    "message": "想把胡萝卜分享给谁呢？点点小动物吧。",
+    "text": "想把胡萝卜分享给谁呢？"
+  },
+  {
+    "id": "pack-water",
+    "message": "水壶装好啦！还想带什么呢？",
+    "text": "水壶装好啦！"
+  },
+  {
+    "id": "unpack-water",
+    "message": "水壶先留在这里。还想带什么呢？",
+    "text": "水壶先留在这里。"
+  },
+  {
+    "id": "select-water",
+    "message": "想把水壶分享给谁呢？点点小动物吧。",
+    "text": "想把水壶分享给谁呢？"
+  },
+  {
+    "id": "hello-rabbit",
+    "message": "我是小兔。卡布，我在森林等你哦！",
+    "text": "我是小兔。卡布，我在森林等你哦！"
+  },
+  {
+    "id": "bye-rabbit",
+    "message": "小兔挥挥手：下次再一起玩吧！",
+    "text": "小兔挥挥手：下次再一起玩吧！"
+  },
+  {
+    "id": "invite-rabbit",
+    "message": "我是小兔，想和你一起野餐。先点一样食物吧！",
+    "text": "我是小兔，想和你一起野餐。先点一样食物吧！"
+  },
+  {
+    "id": "share-rabbit-apple",
+    "message": "小兔吃到了苹果：啊呜，谢谢卡布！",
+    "text": "小兔吃到了苹果：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-rabbit-banana",
+    "message": "小兔吃到了香蕉：啊呜，谢谢卡布！",
+    "text": "小兔吃到了香蕉：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-rabbit-bread",
+    "message": "小兔吃到了面包：啊呜，谢谢卡布！",
+    "text": "小兔吃到了面包：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-rabbit-strawberry",
+    "message": "小兔吃到了草莓：啊呜，谢谢卡布！",
+    "text": "小兔吃到了草莓：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-rabbit-carrot",
+    "message": "小兔吃到了胡萝卜：啊呜，谢谢卡布！",
+    "text": "小兔吃到了胡萝卜：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-rabbit-water",
+    "message": "小兔咕嘟咕嘟喝了水：谢谢卡布，真舒服！",
+    "text": "小兔咕嘟咕嘟喝了水：谢谢卡布，真舒服！"
+  },
+  {
+    "id": "hello-bear",
+    "message": "我是小熊。卡布，我在森林等你哦！",
+    "text": "我是小熊。卡布，我在森林等你哦！"
+  },
+  {
+    "id": "bye-bear",
+    "message": "小熊挥挥手：下次再一起玩吧！",
+    "text": "小熊挥挥手：下次再一起玩吧！"
+  },
+  {
+    "id": "invite-bear",
+    "message": "我是小熊，想和你一起野餐。先点一样食物吧！",
+    "text": "我是小熊，想和你一起野餐。先点一样食物吧！"
+  },
+  {
+    "id": "share-bear-apple",
+    "message": "小熊吃到了苹果：啊呜，谢谢卡布！",
+    "text": "小熊吃到了苹果：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-bear-banana",
+    "message": "小熊吃到了香蕉：啊呜，谢谢卡布！",
+    "text": "小熊吃到了香蕉：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-bear-bread",
+    "message": "小熊吃到了面包：啊呜，谢谢卡布！",
+    "text": "小熊吃到了面包：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-bear-strawberry",
+    "message": "小熊吃到了草莓：啊呜，谢谢卡布！",
+    "text": "小熊吃到了草莓：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-bear-carrot",
+    "message": "小熊吃到了胡萝卜：啊呜，谢谢卡布！",
+    "text": "小熊吃到了胡萝卜：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-bear-water",
+    "message": "小熊咕嘟咕嘟喝了水：谢谢卡布，真舒服！",
+    "text": "小熊咕嘟咕嘟喝了水：谢谢卡布，真舒服！"
+  },
+  {
+    "id": "hello-squirrel",
+    "message": "我是小松鼠。卡布，我在森林等你哦！",
+    "text": "我是小松鼠。卡布，我在森林等你哦！"
+  },
+  {
+    "id": "bye-squirrel",
+    "message": "小松鼠挥挥手：下次再一起玩吧！",
+    "text": "小松鼠挥挥手：下次再一起玩吧！"
+  },
+  {
+    "id": "invite-squirrel",
+    "message": "我是小松鼠，想和你一起野餐。先点一样食物吧！",
+    "text": "我是小松鼠，想和你一起野餐。先点一样食物吧！"
+  },
+  {
+    "id": "share-squirrel-apple",
+    "message": "小松鼠吃到了苹果：啊呜，谢谢卡布！",
+    "text": "小松鼠吃到了苹果：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-squirrel-banana",
+    "message": "小松鼠吃到了香蕉：啊呜，谢谢卡布！",
+    "text": "小松鼠吃到了香蕉：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-squirrel-bread",
+    "message": "小松鼠吃到了面包：啊呜，谢谢卡布！",
+    "text": "小松鼠吃到了面包：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-squirrel-strawberry",
+    "message": "小松鼠吃到了草莓：啊呜，谢谢卡布！",
+    "text": "小松鼠吃到了草莓：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-squirrel-carrot",
+    "message": "小松鼠吃到了胡萝卜：啊呜，谢谢卡布！",
+    "text": "小松鼠吃到了胡萝卜：啊呜，谢谢卡布！"
+  },
+  {
+    "id": "share-squirrel-water",
+    "message": "小松鼠咕嘟咕嘟喝了水：谢谢卡布，真舒服！",
+    "text": "小松鼠咕嘟咕嘟喝了水：谢谢卡布，真舒服！"
+  },
+  {
+    "id": "discover-butterfly",
+    "message": "蝴蝶飞出来啦！扑扇扑扇，你好，卡布。",
+    "text": "蝴蝶飞出来啦！扑扇扑扇，你好，卡布。"
+  },
+  {
+    "id": "discover-frog",
+    "message": "呱，呱！小青蛙跳上了荷叶，和你打招呼。",
+    "text": "呱，呱！小青蛙跳上了荷叶，和你打招呼。"
+  },
+  {
+    "id": "discover-acorn",
+    "message": "笃笃笃！树洞里有一颗橡果，是小松鼠的宝贝。",
+    "text": "笃笃笃！树洞里有一颗橡果，是小松鼠的宝贝。"
+  },
+  {
+    "id": "blanket-peach",
+    "message": "铺上蜜桃粉的小毯子，真好看。",
+    "text": "铺上蜜桃粉的小毯子，真好看。"
+  },
+  {
+    "id": "blanket-sage",
+    "message": "铺上鼠尾草绿的小毯子，真好看。",
+    "text": "铺上鼠尾草绿的小毯子，真好看。"
+  },
+  {
+    "id": "blanket-lavender",
+    "message": "铺上薰衣草紫的小毯子，真好看。",
+    "text": "铺上薰衣草紫的小毯子，真好看。"
+  },
+  {
+    "id": "weather-rain",
+    "message": "滴答滴答，下小雨啦。撑起伞，也可以一起野餐。",
+    "text": "滴答滴答，下小雨啦。撑起伞，也可以一起野餐。"
+  },
+  {
+    "id": "weather-sun",
+    "message": "太阳出来啦！小花也抬起了头。",
+    "text": "太阳出来啦！小花也抬起了头。"
+  },
+  {
+    "id": "choose-again",
+    "message": "没关系，再挑一样喜欢的吧。",
+    "text": "没关系，再挑一样喜欢的吧。"
+  },
+  {
+    "id": "photo-saved",
+    "message": "纪念照准备好啦！可以在下载的图片里找到它。",
+    "text": "纪念照准备好啦！可以在下载的图片里找到它。"
+  },
+  {
+    "id": "photo-error",
+    "message": "纪念照暂时没有保存成功，请再试一次。",
+    "text": "纪念照暂时没有保存成功，请再试一次。"
+  }
+]

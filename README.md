@@ -36,7 +36,7 @@ npm run dev
 
 ```sh
 npm run check     # 格式、lint 和 TypeScript
-npm test          # 游戏状态与存档规则
+npm test          # 游戏状态、存档与音频播放规则
 npm run build    # 严格类型检查和生产构建，输出 dist/
 npm run preview  # 生产构建预览，端口 4174
 ```
@@ -59,9 +59,10 @@ src/
   game/
     model.ts            # 有类型的状态、事件、纯 reducer、存档校验
     content.ts          # 角色名、食物名、章节引导与主题色
+    voiceLines.json     # 固定配音清单：界面消息、短朗读和音频 ID
   hooks/
     usePicnic.ts        # reducer 与本地存储；不可用时仍可继续玩
-    useAudio.ts         # 系统中文朗读与 Web Audio 提示音
+    useAudio.ts         # 固定 MP3 配音与 Web Audio 提示音
   components/
     PicnicScene.tsx     # 交互森林、动物与探索热点
     FoodTray.tsx        # 食物选择、选中和已分享状态
@@ -70,6 +71,7 @@ src/
     ParentNote.tsx      # 给家长的说明，原生无障碍对话框
     Illustrations.tsx   # 可复用的动物、食物和物件插画
     Landscape.tsx       # 森林景观
+  lib/VoicePlayer.ts    # 单通道录音播放、打断、重听和错误处理
   lib/exportMemory.tsx  # 按需加载的本地 PNG 导出
   App.tsx               # 组装场景、事件反馈和导航
 ```
@@ -77,6 +79,8 @@ src/
 游戏规则不依赖 React。组件通过 typed props 和事件回调通信，不在各个组件里重复判断流程规则。SVG 纪念照独立于交互 DOM，因此预览与导出一致，也不会将菜单、按钮截进图片。
 
 添加食物或角色时，先更新模型和内容映射，再加入对应插画与测试。新增玩法应优先扩展 `PicnicAction` 和 reducer，而不是在展示组件中改变进度。
+
+可用 `npm run test:audio` 验收真实 MP3 播放、打断、静音持久化和音频下载失败后的可玩性。默认验收 `http://127.0.0.1:4174`，支持 `BASE_URL` 覆盖。
 
 ## 部署
 
@@ -97,7 +101,8 @@ npm run deploy
 ## 声音、存储与兼容性
 
 - 点击对话气泡可以重听，声音按钮可以静音。浏览器不允许自动播放时，第一次点击后才会发声。
-- 朗读使用设备提供的中文语音，音色和可用性取决于浏览器及系统。系统语音服务可能需要联网；本项目不提供远程语音接口。设备没有中文语音时，仍能通过图形和文字游玩。
+- 使用千问生成的固定中文 MP3，随游戏一起部署，音色不依赖设备的系统语音。游玩不请求百炼接口，不消耗合成额度。快速点击会切换到最新一句，声音加载失败时仍可通过图形和文字游玩。
+- 配音共 60 段，生成方式、免费额度保护与复用方法见 [配音生产说明](docs/audio-production.md)。密钥仅在本机生成时使用，不进入前端或仓库。
 - 游戏状态保存在当前浏览器的 `localStorage`，不会跨设备同步。隐私模式、存储被禁用或存档损坏都不会阻止游戏。
 - 纪念照在浏览器本地生成，不上传。移动端下载后的保存位置由浏览器决定。
 - 核心体验只需要静态资源。当前没有 Service Worker 或离线安装模式。

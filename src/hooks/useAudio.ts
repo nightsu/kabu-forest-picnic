@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { VoicePlayer } from '../lib/VoicePlayer';
 
 export function useAudio() {
   const [enabled, setEnabled] = useState(() => {
@@ -9,37 +10,41 @@ export function useAudio() {
     }
   });
   const context = useRef<AudioContext | null>(null);
+  const player = useRef<VoicePlayer | null>(null);
+  const chimeVersion = useRef(0);
+  const notes = useRef(new Set<OscillatorNode>());
   const speak = useCallback(
     (text: string) => {
-      if (!enabled || !('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'zh-CN';
-      const voice = window.speechSynthesis.getVoices().find((item) => item.lang === 'zh-CN');
-      if (voice) utterance.voice = voice;
-      utterance.rate = 0.85;
-      utterance.pitch = 1.12;
-      window.speechSynthesis.speak(utterance);
+      if (!enabled) return;
+      player.current ??= new VoicePlayer(import.meta.env.BASE_URL);
+      player.current.speak(text);
     },
     [enabled],
   );
 
   const chime = useCallback(() => {
     if (!enabled) return;
+    chimeVersion.current += 1;
+    for (const note of notes.current) note.stop();
+    notes.current.clear();
     try {
       context.current ??= new AudioContext();
       const audio = context.current;
+      const version = chimeVersion.current;
       void audio
         .resume()
         .then(() => {
+          if (version !== chimeVersion.current) return;
           [523.25, 659.25, 783.99].forEach((frequency, i) => {
             const oscillator = audio.createOscillator();
             const gain = audio.createGain();
             const start = audio.currentTime + i * 0.055;
+            notes.current.add(oscillator);
+            oscillator.onended = () => notes.current.delete(oscillator);
             oscillator.type = 'sine';
             oscillator.frequency.value = frequency;
             gain.gain.setValueAtTime(0, start);
-            gain.gain.linearRampToValueAtTime(0.055, start + 0.015);
+            gain.gain.linearRampToValueAtTime(0.025, start + 0.015);
             gain.gain.exponentialRampToValueAtTime(0.001, start + 0.32);
             oscillator.connect(gain);
             gain.connect(audio.destination);
@@ -55,14 +60,17 @@ export function useAudio() {
 
   useEffect(
     () => () => {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      player.current?.stop();
       if (context.current) void context.current.close().catch(() => {});
     },
     [],
   );
 
   function toggle() {
-    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    player.current?.stop();
+    chimeVersion.current += 1;
+    for (const note of notes.current) note.stop();
+    notes.current.clear();
     setEnabled(!enabled);
     try {
       localStorage.setItem('kabu-picnic:sound', enabled ? 'off' : 'on');
