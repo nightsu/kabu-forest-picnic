@@ -1,7 +1,8 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
+import { useState } from 'react';
 import type { Animal, Discovery, PicnicAction, PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
-import { animalNames, chapters, discoveryNames, foodNames } from '../game/content';
+import { animalNames, discoveryNames, foodNames } from '../game/content';
 import {
   AcornArt,
   AnimalArt,
@@ -11,6 +12,7 @@ import {
   FoodArt,
   FrogArt,
   Icon,
+  UmbrellaArt,
 } from './Illustrations';
 import { Flower, Landscape } from './Landscape';
 
@@ -30,17 +32,16 @@ const discoveries: { item: Discovery; label: string; aria: string }[] = [
 ];
 
 export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, onReplay }: Props) {
+  const [plays, setPlays] = useState<Record<string, number>>({});
+  function play(friend: Animal | Discovery) {
+    setPlays((previous) => ({ ...previous, [friend]: (previous[friend] ?? 0) + 1 }));
+  }
   return (
     <section
       className={`picnic-scene phase-${state.phase} weather-${state.weather}`}
       aria-label="森林游戏场景"
     >
       <Landscape className="landscape" weather={state.weather} />
-      <div className="scene-label">
-        <span className="live-dot" />
-        森林的一个好日子<span className="label-separator">/</span>
-        <span>慢慢玩，不着急</span>
-      </div>
       <motion.button
         className="weather-button"
         aria-label={state.weather === 'sun' ? '变成下雨天' : '变成晴天'}
@@ -72,11 +73,15 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
             />
           </svg>
         )}
-        <span>{state.weather === 'sun' ? '点点太阳' : '雨也很温柔'}</span>
       </motion.button>
-      <button className="speech-bubble" onClick={onReplay} aria-label={`再听一次：${message}`}>
+      <button
+        className="speech-bubble"
+        onClick={onReplay}
+        title="再听一次"
+        aria-label={`再听一次：${message}`}
+      >
         <Icon name="sound" />
-        <span role="status" aria-live="polite">
+        <span className="sr-only" role="status" aria-live="polite">
           {message}
         </span>
       </button>
@@ -84,20 +89,11 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
         <>
           <BlanketArt color={state.blanket} className="scene-blanket" />
           <div className="scene-basket">
-            <BasketArt />
-            <div className="basket-foods">
-              {state.packed
-                .filter((food) => !state.served.some((item) => item.food === food))
-                .map((food) => (
-                  <motion.div
-                    key={food}
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                  >
-                    <FoodArt food={food} />
-                  </motion.div>
-                ))}
-            </div>
+            <BasketArt
+              foods={state.packed.filter(
+                (food) => !state.served.some((item) => item.food === food),
+              )}
+            />
           </div>
           {ANIMALS.map((animal) => {
             const servings = state.served.filter((item) => item.animal === animal);
@@ -107,18 +103,23 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 type="button"
                 className={`animal animal-${animal} ${state.selected ? 'ready-to-share' : ''}`}
                 aria-label={animalNames[animal]}
-                onClick={() => onAnimal(animal)}
+                onClick={() => {
+                  play(animal);
+                  onAnimal(animal);
+                }}
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.92 }}
               >
                 <motion.div
-                  key={servings.length}
-                  animate={servings.length ? { y: [0, -12, 0], rotate: [0, -4, 4, 0] } : {}}
-                  transition={{ duration: 0.55 }}
+                  key={`${servings.length}-${plays[animal] ?? 0}`}
+                  className={plays[animal] ? 'animal-playing' : ''}
                 >
-                  <AnimalArt animal={animal} happy={servings.length > 0 || state.phase === 3} />
+                  <AnimalArt
+                    animal={animal}
+                    happy={servings.length > 0 || !!plays[animal] || state.phase === 3}
+                  />
                 </motion.div>
-                <span className="animal-name">
+                <span className="sr-only">
                   {animalNames[animal]}
                   {servings.length > 0 && <span className="tiny-heart">♥</span>}
                 </span>
@@ -127,7 +128,9 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                     className="animal-treat"
                     aria-label={`收到${servings.map((item) => foodNames[item.food]).join('、')}`}
                   >
-                    <FoodArt food={servings[servings.length - 1]!.food} />
+                    <span key={servings.length} className="treat-bite">
+                      <FoodArt food={servings[servings.length - 1]!.food} />
+                    </span>
                     <span>×{servings.length}</span>
                   </span>
                 )}
@@ -145,7 +148,10 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 key={item}
                 className={`discovery discovery-${item} ${found ? 'found' : ''}`}
                 aria-label={aria}
-                onClick={() => onDiscover(item)}
+                onClick={() => {
+                  play(item);
+                  onDiscover(item);
+                }}
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ y: -5 }}
               >
@@ -181,32 +187,72 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                       <ellipse cx="82" cy="99" rx="21" ry="30" fill="#756548" />
                     </svg>
                   )}
-                  <AnimatePresence>
-                    {found && (
-                      <motion.span
-                        className="found-friend"
-                        initial={{ y: 20, scale: 0 }}
-                        animate={{ y: 0, scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 230, damping: 14 }}
-                      >
-                        {item === 'butterfly' ? (
-                          <ButterflyArt />
-                        ) : item === 'frog' ? (
-                          <FrogArt />
-                        ) : (
-                          <AcornArt />
-                        )}
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
+                  {found && (
+                    <motion.span
+                      key={plays[item] ?? 0}
+                      className={`found-friend ${plays[item] ? 'friend-playing' : ''}`}
+                      initial={{ y: 20, scale: 0 }}
+                      animate={{ y: 0, scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 230, damping: 14 }}
+                    >
+                      {item === 'butterfly' ? (
+                        <ButterflyArt />
+                      ) : item === 'frog' ? (
+                        <FrogArt />
+                      ) : (
+                        <AcornArt />
+                      )}
+                    </motion.span>
+                  )}
                   {!found && <span className="discovery-question">?</span>}
                 </div>
-                <span className="discovery-name">
-                  {found ? `${discoveryNames[item]}，你好！` : label}
-                </span>
+                <span className="sr-only">{found ? `${discoveryNames[item]}，你好！` : label}</span>
               </motion.button>
             );
           })}
+        </div>
+      )}
+      {state.phase === 2 && (
+        <div className="picnic-companions">
+          {state.discoveries.map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`companion companion-${item} ${state.acornGifted && item === 'acorn' ? 'gifted' : ''}`}
+              aria-label={
+                item === 'acorn'
+                  ? state.acornGifted
+                    ? '看看小松鼠的橡果'
+                    : '把橡果送给小松鼠'
+                  : `和${discoveryNames[item]}玩`
+              }
+              onClick={() => {
+                play(item);
+                if (item === 'acorn') {
+                  play('squirrel');
+                  onAction({ type: 'GIVE_ACORN' });
+                } else onDiscover(item);
+              }}
+            >
+              <span key={plays[item] ?? 0} className={plays[item] ? 'friend-playing' : ''}>
+                {item === 'butterfly' ? (
+                  <ButterflyArt />
+                ) : item === 'frog' ? (
+                  <FrogArt />
+                ) : (
+                  <AcornArt />
+                )}
+              </span>
+              {item === 'acorn' && !state.acornGifted && (
+                <span className="sr-only">送给小松鼠</span>
+              )}
+              {item === 'acorn' && state.acornGifted && (
+                <span className="gift-heart" aria-hidden="true">
+                  ♥
+                </span>
+              )}
+            </button>
+          ))}
         </div>
       )}
       {state.weather === 'rain' && (
@@ -217,43 +263,21 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {Array.from({ length: 30 }, (_, i) => (
-              <path
-                key={i}
-                d={`m${(i * 137) % 1200} ${(i * 83) % 470} -5 15`}
-                stroke="#8baca5"
-                strokeWidth="2"
-                opacity=".35"
-              />
-            ))}
+            {Array.from({ length: 30 }, (_, i) => ({ x: (i * 137) % 1200, y: (i * 83) % 470 }))
+              .filter(({ x, y }) => state.phase === 1 || y < 140 || x < 100 || x > 1140)
+              .map(({ x, y }, i) => (
+                <path
+                  key={i}
+                  d={`m${x} ${y} -5 15`}
+                  stroke="#8baca5"
+                  strokeWidth="2"
+                  opacity=".35"
+                />
+              ))}
           </svg>
-          <svg className="umbrella" viewBox="0 0 180 150" aria-hidden="true">
-            <path
-              d="M90 49v72q0 21 17 18 11-2 11-14"
-              stroke="#a68b61"
-              strokeWidth="5"
-              fill="none"
-            />
-            <path
-              d="M10 66q70-104 160 0-16-14-33 0-21-14-45 0-21-14-43 0-18-14-39 0Z"
-              fill="#e6c585"
-            />
-            <path d="M48 66Q62 8 92 22q28 6 45 44" fill="none" stroke="#c7a96e" strokeWidth="2" />
-          </svg>
+          {state.phase !== 1 && <UmbrellaArt className="umbrella" />}
         </>
       )}
-      <div className="scene-footnote">
-        {state.phase === 0
-          ? '一点喜欢，一篮期待。'
-          : state.phase === 1
-            ? '每一片叶子，都藏着小小的惊喜。'
-            : state.phase === 2
-              ? '今天的快乐，是一起分享。'
-              : '下次见，我的森林朋友。'}
-      </div>
-      <span className="scene-chapter">
-        {String(state.phase + 1).padStart(2, '0')} / {chapters.length.toString().padStart(2, '0')}
-      </span>
     </section>
   );
 }

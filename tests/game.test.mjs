@@ -38,6 +38,27 @@ test('forest surprises are optional and discoveries do not duplicate', () => {
   assert.equal(step(state, 'NEXT').phase, 2);
 });
 
+test('a discovered acorn can be given at the picnic without consuming selected food', () => {
+  let state = step(packed(), 'NEXT');
+  assert.equal(step(state, 'GIVE_ACORN').acornGifted, false);
+  state = step(state, 'DISCOVER', { item: 'acorn' });
+  assert.equal(step(state, 'GIVE_ACORN').acornGifted, false);
+  state = step(step(state, 'NEXT'), 'SELECT', { food: 'apple' });
+  const gifted = step(state, 'GIVE_ACORN');
+  assert.equal(gifted.acornGifted, true);
+  assert.equal(gifted.selected, 'apple');
+  assert.deepEqual(gifted.served, []);
+  assert.deepEqual(step(gifted, 'GIVE_ACORN'), gifted);
+  assert.deepEqual(restore(JSON.parse(JSON.stringify(gifted))), gifted);
+  assert.equal(step(gifted, 'RESET').acornGifted, false);
+});
+
+test('older saves keep their picnic and impossible acorn gifts are rejected', () => {
+  const { acornGifted: _acornGifted, ...oldSave } = sharing();
+  assert.deepEqual(restore(oldSave), sharing());
+  assert.deepEqual(restore({ ...oldSave, acornGifted: true }), initialState());
+});
+
 test('all six foods can go to the same animal without a score or failure', () => {
   let state = FOODS.reduce((s, food) => step(s, 'PACK', { food }), initialState());
   state = step(step(state, 'NEXT'), 'NEXT');

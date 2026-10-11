@@ -1,5 +1,13 @@
 import { Landscape } from './Landscape';
-import { AnimalArt, BlanketArt, FoodArt } from './Illustrations';
+import {
+  AcornArt,
+  AnimalArt,
+  BlanketArt,
+  ButterflyArt,
+  FoodArt,
+  FrogArt,
+  UmbrellaArt,
+} from './Illustrations';
 import type { PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
 
@@ -33,6 +41,7 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
             <circle cx="855" cy="62" r="32" />
           </g>
         )}
+        {state.weather === 'rain' && <UmbrellaArt x={280} y={5} width={620} height={490} />}
         <BlanketArt color={state.blanket} x={345} y={348} width={510} height={170} />
         {ANIMALS.map((animal, i) => (
           <AnimalArt
@@ -55,15 +64,19 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
             height={65}
           />
         ))}
-        {state.weather === 'rain' && (
-          <g>
-            <path d="M600 80v86q0 20 16 16" stroke="#ad8d63" strokeWidth="6" fill="none" />
-            <path
-              d="M499 99q98-140 202 0-27-20-51 0-28-22-50 0-26-21-50 0-29-22-51 0Z"
-              fill="#e6c585"
-            />
-          </g>
-        )}
+        {state.discoveries.map((item) => (
+          <svg
+            key={item}
+            data-memory-discovery={item}
+            x={item === 'butterfly' ? 300 : item === 'frog' ? 900 : state.acornGifted ? 735 : 300}
+            y={item === 'butterfly' ? 200 : 425}
+            width={65}
+            height={65}
+            viewBox="0 0 100 100"
+          >
+            {item === 'butterfly' ? <ButterflyArt /> : item === 'frog' ? <FrogArt /> : <AcornArt />}
+          </svg>
+        ))}
       </svg>
       <text
         x="600"

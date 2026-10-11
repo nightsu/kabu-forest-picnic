@@ -344,7 +344,13 @@ export function AnimalArt({
   );
 }
 
-export function BasketArt({ className = '' }: { className?: string }) {
+export function BasketArt({
+  className = '',
+  foods = [],
+}: {
+  className?: string;
+  foods?: readonly Food[];
+}) {
   const id = useId();
   return (
     <svg viewBox="0 0 210 160" className={className} aria-hidden="true">
@@ -357,6 +363,23 @@ export function BasketArt({ className = '' }: { className?: string }) {
       <ellipse cx="107" cy="147" rx="83" ry="9" fill="#58704a" opacity=".12" />
       <path d="M49 74C45-7 164-7 161 74" fill="none" stroke="#aa784a" strokeWidth="12" />
       <path d="M49 73C48 2 162 2 161 73" fill="none" stroke="#d7b17c" strokeWidth="5" />
+      <ellipse cx="105" cy="70" rx="82" ry="16" fill="#987044" />
+      {foods.map((food, i) => {
+        const rear = foods.length > 3 && i < 3;
+        const rowCount = rear ? 3 : Math.min(3, foods.length > 3 ? foods.length - 3 : foods.length);
+        const column = rear ? i : foods.length > 3 ? i - 3 : i;
+        return (
+          <g key={food} className="basket-item">
+            <FoodArt
+              food={food}
+              x={105 - rowCount * 24 + column * 48}
+              y={rear ? 16 : 30}
+              width={50}
+              height={50}
+            />
+          </g>
+        );
+      })}
       <path
         d="m23 68 17 68q64 19 131 0l17-68Z"
         fill={`url(#${id})`}
@@ -374,6 +397,33 @@ export function BasketArt({ className = '' }: { className?: string }) {
       />
       <rect x="96" y="93" width="24" height="22" rx="5" fill="#9c7148" />
       <path d="m105 98 7 6-7 6" stroke="#f3d39d" strokeWidth="2" fill="none" />
+    </svg>
+  );
+}
+
+export function UmbrellaArt(props: {
+  className?: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <svg viewBox="0 0 600 330" preserveAspectRatio="none" aria-hidden="true" {...props}>
+      <path d="M300 6v294" stroke="#a68b61" strokeWidth="7" fill="none" />
+      <ellipse cx="300" cy="305" rx="24" ry="5" fill="#78906b" opacity=".25" />
+      <path
+        d="M10 110Q300-100 590 110q-48-24-96 0-48-24-97 0-48-24-97 0-48-24-97 0-48-24-97 0-48-24-96 0Z"
+        fill="#e6c585"
+        stroke="#c5a464"
+        strokeWidth="3"
+      />
+      <path
+        d="M106 110Q190 8 300 6q110 2 194 104M203 110Q250 10 300 6q50 4 97 104M300 6v104"
+        fill="none"
+        stroke="#c7a96e"
+        strokeWidth="3"
+      />
     </svg>
   );
 }

@@ -1,14 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import {
-  animalNames,
-  blanketColors,
-  blanketNames,
-  chapters,
-  discoveryNames,
-  foodNames,
-} from './game/content';
-import type { Animal, Blanket, Discovery, Food, PicnicAction } from './game/model';
+import { animalNames, blanketNames, chapters, foodNames } from './game/content';
+import type { Animal, Discovery, Food, PicnicAction } from './game/model';
 import { usePicnic } from './hooks/usePicnic';
 import { useAudio } from './hooks/useAudio';
 import { FoodTray } from './components/FoodTray';
@@ -16,14 +9,8 @@ import { PicnicScene } from './components/PicnicScene';
 import { Progress } from './components/Progress';
 import { ParentNote } from './components/ParentNote';
 import { MemoryCard } from './components/MemoryCard';
-import {
-  AcornArt,
-  AnimalArt,
-  ButterflyArt,
-  FrogArt,
-  Icon,
-  Sprout,
-} from './components/Illustrations';
+import { Icon, Sprout } from './components/Illustrations';
+import { JourneyArt } from './components/JourneyArt';
 
 export default function App() {
   const { state, dispatch } = usePicnic();
@@ -54,6 +41,7 @@ export default function App() {
           : '太阳出来啦！小花也抬起了头。',
       );
     if (action.type === 'BLANKET') say(`铺上${blanketNames[action.blanket]}的小毯子，真好看。`);
+    if (action.type === 'GIVE_ACORN') say('笃笃笃！树洞里有一颗橡果，是小松鼠的宝贝。');
   }
 
   function onFood(food: Food) {
@@ -149,7 +137,6 @@ export default function App() {
           </span>
           <div>
             <span className="brand-name">卡布的小世界</span>
-            <span className="brand-english">KABU’S LITTLE WORLD</span>
           </div>
         </div>
         <div className="header-actions">
@@ -160,7 +147,6 @@ export default function App() {
             aria-pressed={audio.enabled}
           >
             <Icon name={audio.enabled ? 'sound' : 'mute'} />
-            <span>{audio.enabled ? '声音已开' : '安静玩耍'}</span>
           </button>
           <span className="header-divider" />
           <button className="parent-link" onClick={() => setNoteOpen(true)}>
@@ -169,33 +155,17 @@ export default function App() {
         </div>
       </header>
       <main>
-        <section className="intro">
+        <section className="sr-only">
           <div className="intro-copy">
-            <div className="eyebrow story-label">
-              <span />
-              森林野餐<span className="edition">THE FOREST PICNIC · 01</span>
-            </div>
             <h1 ref={heading} tabIndex={-1}>
-              {chapter.title}
+              {chapter.label}
             </h1>
-            <p>{chapter.subtitle}</p>
-          </div>
-          <div className="invitation">
-            <div className="invitation-rabbit">
-              <AnimalArt animal="rabbit" />
-            </div>
-            <div>
-              <span className="handwritten">一起去玩吧！</span>
-              <span>一份来自森林的邀请</span>
-            </div>
-            <svg className="invitation-spark" viewBox="0 0 40 40" aria-hidden="true">
-              <path d="m20 2 3 13 13 5-13 3-3 13-4-13-14-3 14-5Z" fill="#d5b475" />
-            </svg>
           </div>
         </section>
         <Progress phase={state.phase} />
         <AnimatePresence mode="wait">
           <motion.div
+            className="play-stage"
             key={state.phase}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -209,27 +179,17 @@ export default function App() {
                   <MemoryCard state={state} date={date} />
                 </div>
                 <div className="memory-copy">
-                  <span className="eyebrow">OUR LITTLE HAPPY MOMENT</span>
-                  <h2>
-                    今天的快乐，
-                    <br />
-                    有你一份。
-                  </h2>
-                  <p>
-                    我们带着 {state.packed.length} 样喜欢的东西，
-                    <br />
-                    和森林朋友分享了 {state.served.length} 份美味。
-                  </p>
-                  <p className="memory-signature">小兔、小熊和小松鼠 ♡</p>
                   <button
-                    className="primary-button"
+                    className="picture-button save-picture"
                     onClick={() => void savePhoto()}
                     disabled={saving}
+                    aria-label={saving ? '正在准备' : '保存纪念照'}
+                    aria-busy={saving}
+                    title="保存纪念照"
                   >
+                    <JourneyArt phase={3} />
                     <Icon name="download" />
-                    {saving ? '正在准备…' : '保存纪念照'}
                   </button>
-                  <p className="save-hint">保存在自己的设备上，随时回看</p>
                   <p className="photo-feedback" role="status">
                     {feedback || '挥挥手，我们下次再见！'}
                   </p>
@@ -246,103 +206,37 @@ export default function App() {
               />
             )}
             {(state.phase === 0 || state.phase === 2) && <FoodTray state={state} onFood={onFood} />}
-            {state.phase === 1 && (
-              <section className="explore-note">
-                <div>
-                  <span className="eyebrow">LITTLE WONDERS ALONG THE WAY</span>
-                  <h2>发现小小的美好</h2>
-                  <p>想多看一会儿也可以，随时都能去野餐。</p>
-                </div>
-                <div className="discovery-stickers">
-                  {(['butterfly', 'frog', 'acorn'] as const).map((item) => (
-                    <span
-                      className={state.discoveries.includes(item) ? 'discovered' : ''}
-                      key={item}
-                    >
-                      {item === 'butterfly' ? (
-                        <ButterflyArt />
-                      ) : item === 'frog' ? (
-                        <FrogArt />
-                      ) : (
-                        <AcornArt />
-                      )}
-                      <span>
-                        {state.discoveries.includes(item) ? discoveryNames[item] : '还没遇见'}
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
           </motion.div>
         </AnimatePresence>
         <div className="journey-actions">
           <div className="journey-secondary">
-            {state.phase > 0 ? (
-              <button className="back-button" onClick={() => move('BACK')}>
+            {state.phase > 0 && (
+              <button
+                className="picture-button picture-back"
+                onClick={() => move('BACK')}
+                aria-label={state.phase === 3 ? '再坐一会儿' : '回去看看'}
+                title={state.phase === 3 ? '再坐一会儿' : '回去看看'}
+              >
                 <Icon name="back" />
-                {state.phase === 3 ? '再坐一会儿' : '回去看看'}
+                <JourneyArt phase={(state.phase - 1) as 0 | 1 | 2} />
               </button>
-            ) : (
-              <p className="gentle-hint">
-                <Icon name="heart" />
-                没有标准答案，喜欢就好。
-              </p>
-            )}
-            {state.phase === 2 && (
-              <div className="blanket-options" role="group" aria-label="选择野餐毯颜色">
-                <span>小毯子</span>
-                {(['peach', 'sage', 'lavender'] as Blanket[]).map((blanket) => (
-                  <button
-                    key={blanket}
-                    className={state.blanket === blanket ? 'active' : ''}
-                    style={{ backgroundColor: blanketColors[blanket] }}
-                    aria-label={`${blanketNames[blanket]}野餐毯`}
-                    aria-pressed={state.blanket === blanket}
-                    onClick={() => act({ type: 'BLANKET', blanket })}
-                  >
-                    {state.blanket === blanket && <Icon name="check" />}
-                  </button>
-                ))}
-              </div>
             )}
           </div>
           <div className="next-action">
-            <span className="action-hint">
-              {state.phase === 0
-                ? state.packed.length
-                  ? `小篮子里有 ${state.packed.length} 样喜欢`
-                  : '选一样喜欢的，就可以出发'
-                : state.phase === 2
-                  ? state.served.length
-                    ? '大家坐好，准备留个纪念吧'
-                    : '分享一份美味，就能拍照啦'
-                  : state.phase === 1
-                    ? '朋友们就在前面'
-                    : '下一次，也会有新的快乐'}
-            </span>
             <motion.button
-              className="primary-button next-button"
+              className="picture-button picture-next"
               disabled={!canContinue}
+              aria-label={chapter.next}
+              title={chapter.next}
               onClick={() => move(state.phase === 3 ? 'RESET' : 'NEXT')}
               whileTap={{ scale: 0.96 }}
             >
-              {state.phase === 2 && <Icon name="camera" />}
-              {chapter.next}
-              <Icon name={state.phase === 3 ? 'refresh' : 'arrow'} />
+              <JourneyArt phase={state.phase === 3 ? 0 : ((state.phase + 1) as 1 | 2 | 3)} />
+              <Icon name={state.phase === 3 ? 'refresh' : state.phase === 2 ? 'camera' : 'arrow'} />
             </motion.button>
           </div>
         </div>
       </main>
-      <footer>
-        <span>
-          <Sprout />
-          小小世界，大大快乐。
-        </span>
-        <span>
-          MADE WITH LOVE, FOR KABU<span className="footer-flower">✳</span>
-        </span>
-      </footer>
       {noteOpen && <ParentNote onClose={() => setNoteOpen(false)} />}
     </div>
   );

@@ -373,19 +373,18 @@ h1:focus {
 .scene-basket > svg {
   width: 100%;
 }
-.basket-foods {
-  position: absolute;
-  left: 15%;
-  right: 15%;
-  top: 10%;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap-reverse;
-  transform: rotate(5deg);
+.basket-item {
+  animation: basket-pack 0.4s ease-out;
 }
-.basket-foods > div {
-  width: 34%;
-  margin: -5px -3px;
+@keyframes basket-pack {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 .animal {
   position: absolute;
@@ -442,11 +441,17 @@ h1:focus {
   place-items: center;
   border: 1px solid #e1d9bd;
 }
-.animal-treat > svg {
+.animal-treat .treat-bite {
+  display: block;
   width: 45px;
   height: 45px;
+  animation: treat-bite 0.9s ease-in-out;
 }
-.animal-treat > span {
+.treat-bite > svg {
+  width: 100%;
+  height: 100%;
+}
+.animal-treat > span:not(.treat-bite) {
   position: absolute;
   bottom: -5px;
   right: -2px;
@@ -490,6 +495,138 @@ h1:focus {
   top: 67px;
   left: 25%;
   max-width: 49%;
+}
+.animal-playing {
+  transform-origin: 50% 85%;
+  animation: friend-hop 0.75s ease-in-out;
+}
+.animal-bear .animal-playing {
+  animation-name: friend-sway;
+}
+.animal-squirrel .animal-playing {
+  animation-name: friend-turn;
+}
+.friend-playing {
+  animation: friend-hop 0.75s ease-in-out;
+}
+.discovery-butterfly .friend-playing,
+.companion-butterfly .friend-playing {
+  animation-name: butterfly-flutter;
+}
+.discovery-acorn .friend-playing,
+.companion-acorn .friend-playing {
+  animation-name: friend-turn;
+}
+.picnic-companions {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+.companion {
+  position: absolute;
+  padding: 0;
+  width: 56px;
+  height: 56px;
+  background: none;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+.companion > span:first-child {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.companion svg {
+  width: 100%;
+  height: 100%;
+}
+.companion-butterfly {
+  left: 18%;
+  top: 36%;
+}
+.companion-frog {
+  right: 6%;
+  bottom: 40px;
+}
+.companion-acorn {
+  left: 18%;
+  bottom: 32px;
+}
+.companion-acorn.gifted {
+  left: 78%;
+}
+.gift-invitation {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #526f50;
+}
+.gift-heart {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #bf645e;
+}
+@keyframes friend-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-18px) rotate(-4deg);
+  }
+  65% {
+    transform: translateY(-8px) rotate(4deg);
+  }
+}
+@keyframes friend-sway {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25%,
+  70% {
+    transform: rotate(-9deg);
+  }
+  45%,
+  85% {
+    transform: rotate(9deg);
+  }
+}
+@keyframes friend-turn {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  40% {
+    transform: scaleX(-1) translateY(-7px);
+  }
+}
+@keyframes butterfly-flutter {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(24px, -18px) rotate(12deg);
+  }
+  65% {
+    transform: translate(-15px, -10px) rotate(-12deg);
+  }
+}
+@keyframes treat-bite {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  40%,
+  70% {
+    transform: translateY(-22px) rotate(-15deg) scale(0.85);
+  }
 }
 .scene-footnote {
   position: absolute;
@@ -1606,17 +1743,36 @@ footer > span:last-child {
     right: -3px;
     bottom: 14px;
   }
-  .animal-treat > svg {
+  .animal-treat .treat-bite {
     width: 31px;
     height: 31px;
   }
-  .animal-treat > span {
+  .animal-treat > span:not(.treat-bite) {
     font-size: 8px;
   }
   .umbrella {
     width: 78px;
     right: 8%;
     top: 126px;
+  }
+  .companion {
+    width: 44px;
+    height: 44px;
+  }
+  .companion-butterfly {
+    left: 12%;
+    top: 38%;
+  }
+  .companion-frog {
+    right: 3%;
+    bottom: 25px;
+  }
+  .companion-acorn {
+    left: 35%;
+    bottom: 29px;
+  }
+  .companion-acorn.gifted {
+    left: 65%;
   }
   .discovery {
     width: 105px;
@@ -1707,6 +1863,375 @@ footer > span:last-child {
   }
   .note-content {
     padding: 25px;
+  }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.intro {
+  padding: 18px 0 8px;
+}
+.intro h1 {
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: 0;
+}
+.picnic-scene .speech-bubble {
+  top: 18px;
+  left: 18px;
+  width: 48px;
+  height: 48px;
+  max-width: none;
+  padding: 0;
+  border-radius: 50%;
+  justify-content: center;
+}
+.picnic-scene .speech-bubble .icon {
+  width: 25px;
+  height: 25px;
+}
+.food-options {
+  justify-content: center;
+}
+.journey-art {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+}
+.journey-art > svg {
+  width: 100%;
+  height: 100%;
+}
+.journey-art .journey-apple {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 7px;
+  left: 16px;
+}
+.journey-art-1 > svg {
+  width: 100%;
+  height: 100%;
+}
+.journey-art .journey-blanket {
+  position: absolute;
+  bottom: 0;
+  height: 25px;
+}
+.journey-art .journey-friend {
+  position: absolute;
+  left: 3px;
+  width: 42px;
+  height: 57px;
+}
+.journey-art .journey-snack {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+}
+.journey-photo {
+  display: block;
+  width: 52px;
+  height: 60px;
+  margin: 2px auto;
+  border: 5px solid #fff;
+  border-bottom-width: 10px;
+  background: #a8cec4;
+  box-shadow: 0 2px 0 #668b7f;
+  transform: rotate(7deg);
+  overflow: hidden;
+}
+.journey-photo > svg {
+  width: 100%;
+  height: 100%;
+}
+.progress {
+  gap: 20px;
+  padding: 18px 0;
+  margin: 0 0 10px;
+}
+.progress li {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  background: #e9ece1;
+  opacity: 0.78;
+}
+.progress li.current {
+  border-color: #418d80;
+  background: #e0f3ec;
+  opacity: 1;
+  box-shadow: 0 3px 0 #a6c5b5;
+}
+.progress li.complete {
+  opacity: 1;
+}
+.journey-check {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: #438675;
+  color: white;
+  border-radius: 50%;
+}
+.journey-check .icon {
+  width: 16px;
+  height: 16px;
+}
+.journey-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 96px;
+  gap: 12px 18px;
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  translate: -50% 0;
+  width: min(1190px, calc(100% - 32px));
+  height: calc(120px + env(safe-area-inset-bottom));
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: #f7f5ec;
+  border-top: 1px solid #d4ddce;
+  z-index: 20;
+}
+main {
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
+}
+.picnic-scene .umbrella {
+  left: 52%;
+  right: auto;
+  top: 20px;
+  width: min(74%, 740px);
+  height: calc(100% - 70px);
+  translate: -50% 0;
+}
+.journey-actions .journey-secondary {
+  display: contents;
+}
+.journey-actions .next-action {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+.picture-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 152px;
+  height: 96px;
+  padding: 8px;
+  border: 2px solid #c49f42;
+  border-radius: 8px;
+  background: #f4d475;
+  color: #435d46;
+  box-shadow: 0 5px 0 #c49f42;
+  align-self: center;
+}
+.picture-button .icon {
+  width: 40px;
+  height: 40px;
+  stroke-width: 2.5;
+}
+.picture-back {
+  grid-row: 1;
+  grid-column: 1;
+  background: #b9dfdf;
+  border-color: #7eafb0;
+  box-shadow: 0 5px 0 #7eafb0;
+  color: #345e67;
+}
+.picture-button:disabled {
+  filter: grayscale(0.8);
+  opacity: 0.45;
+  box-shadow: none;
+}
+.picture-button:not(:disabled):active {
+  translate: 0 3px;
+  box-shadow: 0 2px 0 #9a986c;
+}
+.blanket-options {
+  justify-content: center;
+  margin: 16px 0 0;
+  padding: 0;
+  border: 0;
+  gap: 16px;
+}
+.blanket-options button {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+.sound-toggle {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e0ede4;
+}
+.sound-toggle .icon {
+  width: 28px;
+  height: 28px;
+}
+@media (max-width: 480px) {
+  .picnic-scene {
+    height: clamp(250px, calc(100svh - 490px), 354px);
+  }
+  .picnic-scene .umbrella {
+    width: 98%;
+    left: 50%;
+  }
+  .picnic-scene .animal {
+    bottom: 20%;
+  }
+  .companion-butterfly {
+    top: 12px;
+    left: 28%;
+  }
+  .progress {
+    gap: 8px;
+    justify-content: center;
+    padding: 14px 0;
+  }
+  .progress li {
+    width: 60px;
+    height: 60px;
+  }
+  .progress .journey-art {
+    transform: scale(0.72);
+  }
+  .journey-check {
+    width: 20px;
+    height: 20px;
+  }
+  .picture-button {
+    width: 120px;
+    height: 88px;
+    gap: 4px;
+  }
+  .picture-button .icon {
+    width: 32px;
+    height: 32px;
+  }
+  .discovery {
+    width: min(28%, 105px);
+  }
+}
+.app-shell {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+.site-header {
+  flex-shrink: 0;
+}
+main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding-bottom: calc(120px + env(safe-area-inset-bottom));
+}
+.play-stage {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding-bottom: 12px;
+}
+.play-stage .picnic-scene {
+  height: 100%;
+  min-height: 0;
+}
+.play-stage .food-tray {
+  margin-top: 10px;
+}
+.play-stage .memory-section {
+  height: 100%;
+  min-height: 0;
+  padding: 16px;
+  gap: 12px;
+}
+.play-stage .memory-picture {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  max-height: 100%;
+}
+.memory-picture > svg {
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+.memory-copy {
+  min-height: 0;
+}
+.photo-feedback {
+  margin-bottom: 0;
+}
+@media (min-width: 481px) and (max-height: 800px) {
+  .site-header {
+    height: 64px;
+  }
+  .progress {
+    margin: 0;
+    padding: 8px 0;
+  }
+  .progress li {
+    width: 60px;
+    height: 60px;
+  }
+  .progress .journey-art {
+    transform: scale(0.72);
+  }
+  .play-stage .food-tray {
+    padding: 12px;
+  }
+  .food-option > svg {
+    width: 52px;
+    height: 52px;
+  }
+  .picnic-scene {
+    container-type: size;
+  }
+  .picnic-scene .animal {
+    bottom: 20%;
+  }
+  .picnic-scene .animal-rabbit {
+    width: min(137px, 32cqh);
+  }
+  .picnic-scene .animal-bear {
+    width: min(150px, 35cqh);
+  }
+  .picnic-scene .animal-squirrel {
+    width: min(125px, 29cqh);
+  }
+  .picnic-scene .scene-basket {
+    width: min(180px, 40cqh);
+  }
+  .picnic-scene.phase-2 .scene-basket {
+    width: min(125px, 32cqh);
   }
 }
 @media (prefers-reduced-motion: reduce) {

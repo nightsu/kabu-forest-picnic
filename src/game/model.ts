@@ -14,6 +14,7 @@ export interface PicnicState {
   served: { food: Food; animal: Animal }[];
   selected: Food | null;
   discoveries: Discovery[];
+  acornGifted: boolean;
   weather: Weather;
   blanket: Blanket;
 }
@@ -24,7 +25,7 @@ export type PicnicAction =
   | { type: 'DISCOVER'; item: Discovery }
   | { type: 'WEATHER'; weather: Weather }
   | { type: 'BLANKET'; blanket: Blanket }
-  | { type: 'NEXT' | 'BACK' | 'RESET' };
+  | { type: 'NEXT' | 'BACK' | 'RESET' | 'GIVE_ACORN' };
 
 export const initialState = (): PicnicState => ({
   phase: 0,
@@ -32,6 +33,7 @@ export const initialState = (): PicnicState => ({
   served: [],
   selected: null,
   discoveries: [],
+  acornGifted: false,
   weather: 'sun',
   blanket: 'peach',
 });
@@ -85,6 +87,10 @@ export function update(state: PicnicState, action: PicnicAction): PicnicState {
       )
         return state;
       return { ...state, discoveries: [...state.discoveries, action.item] };
+    case 'GIVE_ACORN':
+      return state.phase === 2 && state.discoveries.includes('acorn') && !state.acornGifted
+        ? { ...state, acornGifted: true }
+        : state;
     case 'WEATHER':
       return ['sun', 'rain'].includes(action.weather)
         ? { ...state, weather: action.weather }
@@ -124,10 +130,16 @@ function isServing(value: unknown): value is PicnicState['served'][number] {
 /** Browser storage is untrusted. Invalid or older data always starts a fresh picnic. */
 export function restore(value: unknown): PicnicState {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return initialState();
-  const { phase, packed, served, selected, discoveries, weather, blanket } = value as Record<
-    string,
-    unknown
-  >;
+  const {
+    phase,
+    packed,
+    served,
+    selected,
+    discoveries,
+    weather,
+    blanket,
+    acornGifted = false,
+  } = value as Record<string, unknown>;
   if (
     typeof phase !== 'number' ||
     ![0, 1, 2, 3].includes(phase) ||
@@ -137,6 +149,8 @@ export function restore(value: unknown): PicnicState {
     served.some((item) => !packed.includes(item.food)) ||
     new Set(served.map((item) => item.food)).size !== served.length ||
     !isUniqueList(DISCOVERIES, discoveries) ||
+    typeof acornGifted !== 'boolean' ||
+    (acornGifted && !discoveries.includes('acorn')) ||
     !isOneOf(['sun', 'rain'], weather) ||
     !isOneOf(['peach', 'sage', 'lavender'], blanket) ||
     (selected !== null &&
@@ -155,6 +169,7 @@ export function restore(value: unknown): PicnicState {
     served: served.map(({ food, animal }) => ({ food, animal })),
     selected: selected as Food | null,
     discoveries: [...discoveries],
+    acornGifted,
     weather,
     blanket,
   };

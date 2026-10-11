@@ -9,13 +9,6 @@ export function FoodTray({ state, onFood }: { state: PicnicState; onFood: (food:
   const foods = packing ? FOODS : state.packed;
   return (
     <section className="food-tray" aria-label={packing ? '选择野餐食物' : '分享篮子里的食物'}>
-      <div className="tray-intro">
-        <span className="eyebrow">
-          {packing ? 'A LITTLE OF WHAT YOU LOVE' : 'HAPPINESS IS SHARING'}
-        </span>
-        <h2>{packing ? '带上你喜欢的' : '想请谁吃一点？'}</h2>
-        <p>{packing ? '点一下装好，再点一下取出' : '先点食物，再点小动物'}</p>
-      </div>
       <div className="food-options">
         {foods.map((food) => {
           const served = state.served.some((item) => item.food === food);
@@ -38,7 +31,7 @@ export function FoodTray({ state, onFood }: { state: PicnicState; onFood: (food:
               whileTap={{ scale: 0.92 }}
             >
               <FoodArt food={food} />
-              <span>{foodNames[food]}</span>
+              <span className="sr-only">{foodNames[food]}</span>
               <span className="food-check">{selected || served ? <Icon name="check" /> : '+'}</span>
             </motion.button>
           );

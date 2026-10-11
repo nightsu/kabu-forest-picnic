@@ -1,6 +1,7 @@
 import { chapters } from '../game/content';
 import type { Phase } from '../game/model';
 import { Icon } from './Illustrations';
+import { JourneyArt } from './JourneyArt';
 
 export function Progress({ phase }: { phase: Phase }) {
   return (
@@ -11,9 +12,13 @@ export function Progress({ phase }: { phase: Phase }) {
           className={i === phase ? 'current' : i < phase ? 'complete' : ''}
           aria-current={i === phase ? 'step' : undefined}
         >
-          <span className="step-number">{i < phase ? <Icon name="check" /> : i + 1}</span>
-          <span>{chapter.label}</span>
-          {i < chapters.length - 1 && <span className="step-line" />}
+          <JourneyArt phase={i as Phase} />
+          {i < phase && (
+            <span className="journey-check" aria-hidden="true">
+              <Icon name="check" />
+            </span>
+          )}
+          <span className="sr-only">{chapter.label}</span>
         </li>
       ))}
     </ol>
