@@ -79,6 +79,11 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
           </div>
           {ANIMALS.map((animal) => {
             const servings = state.served.filter((item) => item.animal === animal);
+            const acorn = animal === 'squirrel' && state.acornGifted;
+            const plateContents = [
+              ...servings.map((item) => foodNames[item.food]),
+              ...(acorn ? ['橡果'] : []),
+            ];
             return (
               <motion.button
                 key={animal}
@@ -122,12 +127,12 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                     role="img"
                     data-animal-plate={animal}
                     aria-label={
-                      servings.length
-                        ? `${animalNames[animal]}的餐盘：${servings.map((item) => foodNames[item.food]).join('、')}`
+                      plateContents.length
+                        ? `${animalNames[animal]}的餐盘：${plateContents.join('、')}`
                         : `${animalNames[animal]}的小餐盘`
                     }
                   >
-                    <ServingArt foods={servings.map((item) => item.food)} />
+                    <ServingArt foods={servings.map((item) => item.food)} acorn={acorn} />
                   </span>
                 )}
               </motion.button>
@@ -180,45 +185,47 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
       )}
       {state.phase === 2 && (
         <div className="picnic-companions">
-          {state.discoveries.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={`companion companion-${item} ${state.acornGifted && item === 'acorn' ? 'gifted' : ''}`}
-              aria-label={
-                item === 'acorn'
-                  ? state.acornGifted
-                    ? '看看小松鼠的橡果'
-                    : '把橡果送给小松鼠'
-                  : `和${discoveryNames[item]}玩`
-              }
-              onClick={() => {
-                play(item);
-                if (item === 'acorn') {
-                  play('squirrel');
-                  onAction({ type: 'GIVE_ACORN' });
-                } else onDiscover(item);
-              }}
-            >
-              <span key={plays[item] ?? 0} className={plays[item] ? 'friend-playing' : ''}>
-                {item === 'butterfly' ? (
-                  <ButterflyArt />
-                ) : item === 'frog' ? (
-                  <FrogArt />
-                ) : (
-                  <AcornArt />
-                )}
-              </span>
-              {item === 'acorn' && !state.acornGifted && (
-                <span className="sr-only">送给小松鼠</span>
-              )}
-              {item === 'acorn' && state.acornGifted && (
-                <span className="gift-heart" aria-hidden="true">
-                  ♥
+          {state.discoveries
+            .filter((item) => item !== 'acorn' || !state.acornGifted)
+            .map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`companion companion-${item} ${state.acornGifted && item === 'acorn' ? 'gifted' : ''}`}
+                aria-label={
+                  item === 'acorn'
+                    ? state.acornGifted
+                      ? '看看小松鼠的橡果'
+                      : '把橡果送给小松鼠'
+                    : `和${discoveryNames[item]}玩`
+                }
+                onClick={() => {
+                  play(item);
+                  if (item === 'acorn') {
+                    play('squirrel');
+                    onAction({ type: 'GIVE_ACORN' });
+                  } else onDiscover(item);
+                }}
+              >
+                <span key={plays[item] ?? 0} className={plays[item] ? 'friend-playing' : ''}>
+                  {item === 'butterfly' ? (
+                    <ButterflyArt />
+                  ) : item === 'frog' ? (
+                    <FrogArt />
+                  ) : (
+                    <AcornArt />
+                  )}
                 </span>
-              )}
-            </button>
-          ))}
+                {item === 'acorn' && !state.acornGifted && (
+                  <span className="sr-only">送给小松鼠</span>
+                )}
+                {item === 'acorn' && state.acornGifted && (
+                  <span className="gift-heart" aria-hidden="true">
+                    ♥
+                  </span>
+                )}
+              </button>
+            ))}
         </div>
       )}
       {state.weather === 'rain' && (

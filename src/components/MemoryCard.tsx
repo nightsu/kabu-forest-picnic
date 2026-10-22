@@ -53,6 +53,7 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
           <g key={animal} data-memory-plate={animal}>
             <ServingArt
               foods={state.served.filter((item) => item.animal === animal).map((item) => item.food)}
+              acorn={animal === 'squirrel' && state.acornGifted}
               x={370 + i * 158}
               y={358}
               width={150}
@@ -60,19 +61,27 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
             />
           </g>
         ))}
-        {state.discoveries.map((item) => (
-          <svg
-            key={item}
-            data-memory-discovery={item}
-            x={item === 'butterfly' ? 300 : item === 'frog' ? 900 : state.acornGifted ? 735 : 300}
-            y={item === 'butterfly' ? 200 : 425}
-            width={65}
-            height={65}
-            viewBox="0 0 100 100"
-          >
-            {item === 'butterfly' ? <ButterflyArt /> : item === 'frog' ? <FrogArt /> : <AcornArt />}
-          </svg>
-        ))}
+        {state.discoveries
+          .filter((item) => item !== 'acorn' || !state.acornGifted)
+          .map((item) => (
+            <svg
+              key={item}
+              data-memory-discovery={item}
+              x={item === 'butterfly' ? 300 : item === 'frog' ? 900 : state.acornGifted ? 735 : 300}
+              y={item === 'butterfly' ? 200 : 425}
+              width={65}
+              height={65}
+              viewBox="0 0 100 100"
+            >
+              {item === 'butterfly' ? (
+                <ButterflyArt />
+              ) : item === 'frog' ? (
+                <FrogArt />
+              ) : (
+                <AcornArt />
+              )}
+            </svg>
+          ))}
       </svg>
       <text
         x="600"

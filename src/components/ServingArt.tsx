@@ -1,12 +1,14 @@
 import { useId } from 'react';
 import type { Food } from '../game/model';
-import { FoodArt } from './PlushArt';
+import { AcornArt, FoodArt } from './PlushArt';
 
 export function ServingArt({
   foods,
+  acorn = false,
   ...props
 }: {
   foods: readonly Food[];
+  acorn?: boolean;
   className?: string;
   x?: number;
   y?: number;
@@ -14,7 +16,10 @@ export function ServingArt({
   height?: number;
 }) {
   const id = useId();
-  const snacks = foods.filter((food) => food !== 'water');
+  const snacks: (Food | 'acorn')[] = [
+    ...foods.filter((food) => food !== 'water'),
+    ...(acorn ? ['acorn' as const] : []),
+  ];
   const columns = Math.min(3, snacks.length);
   const rows = Math.ceil(snacks.length / 3);
   return (
@@ -39,14 +44,32 @@ export function ServingArt({
         strokeDasharray="3 3"
       />
       {snacks.map((food, index) => (
-        <g key={food} className="plate-food" data-plate-food={food}>
-          <FoodArt
-            food={food}
-            x={87 - columns * 21 + (index % 3) * 42}
-            y={rows > 1 ? 8 + Math.floor(index / 3) * 28 : 29}
-            width={42}
-            height={46}
-          />
+        <g
+          key={food}
+          className="plate-food"
+          data-plate-food={food === 'acorn' ? undefined : food}
+          data-plate-acorn={food === 'acorn' ? true : undefined}
+        >
+          {food === 'acorn' ? (
+            <svg
+              className="plate-acorn-art"
+              viewBox="0 0 100 100"
+              x={87 - columns * 21 + (index % 3) * 42}
+              y={rows > 1 ? 8 + Math.floor(index / 3) * 28 : 29}
+              width={42}
+              height={46}
+            >
+              <AcornArt />
+            </svg>
+          ) : (
+            <FoodArt
+              food={food}
+              x={87 - columns * 21 + (index % 3) * 42}
+              y={rows > 1 ? 8 + Math.floor(index / 3) * 28 : 29}
+              width={42}
+              height={46}
+            />
+          )}
         </g>
       ))}
       {foods.includes('water') && (

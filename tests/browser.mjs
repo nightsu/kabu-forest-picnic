@@ -11,6 +11,10 @@ const output = process.env.ARTIFACT_DIR || 'test-results';
 await mkdir(output, { recursive: true });
 const failures = [];
 async function assertOneScreen(page) {
+  await page.waitForFunction(() => {
+    const stage = document.querySelector('.play-stage');
+    return stage && getComputedStyle(stage).opacity === '1';
+  });
   assert.equal(
     await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1),
     true,
@@ -118,7 +122,12 @@ try {
     await assertOneScreen(page);
     await page.getByRole('button', { name: '和小青蛙玩', exact: true }).click();
     await page.getByRole('button', { name: '把橡果送给小松鼠' }).click();
-    assert.equal(await page.getByRole('button', { name: '看看小松鼠的橡果' }).count(), 1);
+    await page.locator('[data-animal-plate="squirrel"] [data-plate-acorn]').waitFor();
+    assert.equal(
+      await page.locator('.companion-acorn').count(),
+      0,
+      'Gifted acorn leaves the ground',
+    );
     await page.getByRole('button', { name: '小兔', exact: true }).click();
     assert.equal(await page.locator('.animal-rabbit .animal-playing').count(), 1);
     assert.equal(
@@ -129,7 +138,7 @@ try {
       'Reduced-motion preference disables the new gestures',
     );
     await page.reload();
-    await page.getByRole('button', { name: '看看小松鼠的橡果' }).waitFor();
+    await page.locator('[data-animal-plate="squirrel"] [data-plate-acorn]').waitFor();
     await page.getByRole('button', { name: '选择苹果' }).click();
     await page.getByRole('button', { name: '小熊', exact: true }).click();
     await page.locator('.animal-bear [data-gesture="eat"]').waitFor();
@@ -185,7 +194,12 @@ try {
     await assertOneScreen(page);
     const photoNextBox = await page.getByRole('button', { name: '再去野餐' }).boundingBox();
     assert.ok(Math.abs(photoNextBox.y - nextBox.y) < 2, 'Photo keeps the same navigation anchor');
-    assert.equal(await page.locator('[data-memory-discovery]').count(), 3);
+    assert.equal(await page.locator('[data-memory-discovery]').count(), 2);
+    assert.equal(
+      await page.locator('[data-memory-plate="squirrel"] [data-plate-acorn]').count(),
+      1,
+      'Photo places the gifted acorn in the squirrel plate',
+    );
     assert.equal(
       await page.locator('[data-memory-plate="bear"] [data-plate-food="apple"]').count(),
       1,
@@ -259,7 +273,7 @@ try {
   ]) {
     await touch.getByRole('button', { name, exact: true }).tap();
   }
-  await touch.getByRole('button', { name: '看看小松鼠的橡果' }).waitFor();
+  await touch.locator('[data-animal-plate="squirrel"] [data-plate-acorn]').waitFor();
   await touch.getByRole('button', { name: '小兔', exact: true }).focus();
   await touch.keyboard.press('Enter');
   for (const animal of ['rabbit', 'bear', 'squirrel']) {
@@ -309,17 +323,24 @@ try {
     await meal.getByRole('button', { name: `装入${food}`, exact: true }).click();
   }
   await meal.getByRole('button', { name: '出发去森林', exact: true }).click();
+  await meal.getByRole('button', { name: '敲敲树洞', exact: true }).click();
   await meal.getByRole('button', { name: '去野餐', exact: true }).click();
+  await meal.getByRole('button', { name: '把橡果送给小松鼠', exact: true }).click();
   for (const food of ['苹果', '香蕉', '面包', '草莓', '胡萝卜', '水壶']) {
     await meal.getByRole('button', { name: `选择${food}`, exact: true }).click();
-    await meal.getByRole('button', { name: '小兔', exact: true }).click();
+    await meal.getByRole('button', { name: '小松鼠', exact: true }).click();
   }
   await meal.reload();
-  const plate = meal.locator('[data-animal-plate="rabbit"]');
+  const plate = meal.locator('[data-animal-plate="squirrel"]');
   assert.equal(
     await plate.locator('[data-plate-food]').count(),
     6,
     'One friend can receive all six distinct foods',
+  );
+  assert.equal(
+    await plate.locator('[data-plate-acorn]').count(),
+    1,
+    'The gift shares the plate with all six foods',
   );
   assert.equal(
     await plate.innerText(),
