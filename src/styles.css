@@ -496,16 +496,6 @@ h1:focus {
   left: 25%;
   max-width: 49%;
 }
-.animal-playing {
-  transform-origin: 50% 85%;
-  animation: friend-hop 0.75s ease-in-out;
-}
-.animal-bear .animal-playing {
-  animation-name: friend-sway;
-}
-.animal-squirrel .animal-playing {
-  animation-name: friend-turn;
-}
 .friend-playing {
   animation: friend-hop 0.75s ease-in-out;
 }

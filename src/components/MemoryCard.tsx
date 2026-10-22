@@ -10,8 +10,9 @@ import {
 } from './Illustrations';
 import type { PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
+import { WeatherArt } from './PlushArt';
 
-/** Self-contained SVG: used for both the preview and local PNG export. */
+/** Shared composition; exportMemory embeds the raster artwork before PNG export. */
 export function MemoryCard({ state, date }: { state: PicnicState; date: string }) {
   return (
     <svg
@@ -32,17 +33,11 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
         preserveAspectRatio="xMidYMid slice"
       >
         <Landscape weather={state.weather} />
-        {state.weather === 'sun' ? (
-          <circle cx="861" cy="80" r="30" fill="#e5c178" />
-        ) : (
-          <g fill="#fffdf0">
-            <ellipse cx="840" cy="80" rx="55" ry="23" />
-            <circle cx="825" cy="66" r="26" />
-            <circle cx="855" cy="62" r="32" />
-          </g>
-        )}
+        <svg x="840" y="30" width="80" height="80" viewBox="0 0 100 100">
+          <WeatherArt weather={state.weather} />
+        </svg>
         {state.weather === 'rain' && <UmbrellaArt x={280} y={5} width={620} height={490} />}
-        <BlanketArt color={state.blanket} x={345} y={348} width={510} height={170} />
+        <BlanketArt color={state.blanket} x={280} y={300} width={650} height={190} />
         {ANIMALS.map((animal, i) => (
           <AnimalArt
             key={animal}

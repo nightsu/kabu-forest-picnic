@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { MotionConfig } from 'motion/react';
 import App from './App';
 import './styles.css';
+import './plush.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

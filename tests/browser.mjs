@@ -118,6 +118,7 @@ try {
     await page.getByRole('button', { name: '看看小松鼠的橡果' }).waitFor();
     await page.getByRole('button', { name: '选择苹果' }).click();
     await page.getByRole('button', { name: '小熊', exact: true }).click();
+    await page.locator('.animal-bear [data-gesture="eat"]').waitFor();
     assert.equal(await page.getByRole('button', { name: '苹果已分享' }).isDisabled(), true);
     await page.getByRole('button', { name: '选择面包' }).click();
     await page.getByRole('button', { name: '小兔', exact: true }).click();
@@ -165,6 +166,7 @@ try {
     assert.match(photo.suggestedFilename(), /\.png$/);
     await photo.saveAs(join(output, `memory-${viewport.width}.png`));
     const png = await readFile(join(output, `memory-${viewport.width}.png`));
+    assert.ok(png.length > 200_000, 'The exported photo contains embedded textured artwork');
     assert.equal(png.subarray(1, 4).toString(), 'PNG');
     assert.equal(png.readUInt32BE(16), 1800);
     assert.equal(png.readUInt32BE(20), 1260);
@@ -229,13 +231,41 @@ try {
   await touch.getByRole('button', { name: '看看小松鼠的橡果' }).waitFor();
   await touch.getByRole('button', { name: '小兔', exact: true }).focus();
   await touch.keyboard.press('Enter');
-  assert.equal(
-    await touch
-      .locator('.animal-rabbit .animal-playing')
-      .evaluate((el) => getComputedStyle(el).animationName),
-    'friend-hop',
-    'Keyboard activation triggers a gesture with motion enabled',
-  );
+  for (const animal of ['rabbit', 'bear', 'squirrel']) {
+    const button = touch.locator(`.animal-${animal}`);
+    const before = await button.boundingBox();
+    await button.focus();
+    await touch.keyboard.press('Enter');
+    const sprite = button.locator('svg[data-gesture="greet"]');
+    await sprite.waitFor();
+    await touch.waitForFunction(
+      (animal) =>
+        document.querySelector(`.animal-${animal} [data-pose]`)?.getAttribute('data-pose') === '1',
+      animal,
+    );
+    await button.screenshot({ path: join(output, `gesture-${animal}-wave.png`) });
+    await touch.waitForFunction(
+      (animal) =>
+        document.querySelector(`.animal-${animal} [data-pose]`)?.getAttribute('data-pose') === '2',
+      animal,
+    );
+    await button.screenshot({ path: join(output, `gesture-${animal}-reply.png`) });
+    await touch.waitForFunction(
+      (animal) =>
+        document.querySelector(`.animal-${animal} [data-pose]`)?.getAttribute('data-pose') === '0',
+      animal,
+    );
+    const after = await button.boundingBox();
+    assert.ok(
+      Math.abs(before.x - after.x) < 1 && Math.abs(before.y - after.y) < 1,
+      'Gestures keep the character anchored',
+    );
+    assert.equal(
+      await button.locator('.animal-playing').evaluate((el) => getComputedStyle(el).animationName),
+      'none',
+      'The gesture changes limbs and facial poses, not the whole-body CSS rotation',
+    );
+  }
   await touchContext.close();
   assert.deepEqual(failures, []);
   console.log('PASS touch companions, keyboard gestures, reduced motion, and optional exploration');

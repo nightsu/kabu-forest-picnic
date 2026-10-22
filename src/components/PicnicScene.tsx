@@ -14,7 +14,8 @@ import {
   Icon,
   UmbrellaArt,
 } from './Illustrations';
-import { Flower, Landscape } from './Landscape';
+import { Landscape } from './Landscape';
+import { DiscoveryArt, WeatherArt } from './PlushArt';
 
 interface Props {
   state: PicnicState;
@@ -33,6 +34,7 @@ const discoveries: { item: Discovery; label: string; aria: string }[] = [
 
 export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, onReplay }: Props) {
   const [plays, setPlays] = useState<Record<string, number>>({});
+  const [lastAction, setLastAction] = useState<Record<string, 'greet' | 'eat'>>({});
   function play(friend: Animal | Discovery) {
     setPlays((previous) => ({ ...previous, [friend]: (previous[friend] ?? 0) + 1 }));
   }
@@ -50,29 +52,7 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
         }
         whileTap={{ scale: 0.9 }}
       >
-        {state.weather === 'sun' ? (
-          <svg viewBox="0 0 90 90" aria-hidden="true">
-            <g stroke="#d9bb74" strokeWidth="3" strokeLinecap="round">
-              <path d="M45 5v8m0 64v8M5 45h8m64 0h8M17 17l6 6m44 44 6 6M17 73l6-6m44-44 6-6" />
-            </g>
-            <circle cx="45" cy="45" r="23" fill="#e8c77c" />
-            <path d="M35 44v3m20-3v3" stroke="#927a47" strokeWidth="3" strokeLinecap="round" />
-            <path d="M40 54q5 4 10 0" stroke="#927a47" strokeWidth="2" fill="none" />
-          </svg>
-        ) : (
-          <svg viewBox="0 0 90 90" aria-hidden="true">
-            <path
-              d="M20 60q-21-11-5-26 9-10 19-4 11-28 31-8 7 8 5 17 22 0 18 17-5 11-20 10Z"
-              fill="#f4f2e9"
-            />
-            <path
-              d="m29 72-3 7m25-7-3 7m25-7-3 7"
-              stroke="#89a9a5"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-          </svg>
-        )}
+        <WeatherArt weather={state.weather} />
       </motion.button>
       <button
         className="speech-bubble"
@@ -104,6 +84,10 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 className={`animal animal-${animal} ${state.selected ? 'ready-to-share' : ''}`}
                 aria-label={animalNames[animal]}
                 onClick={() => {
+                  setLastAction((previous) => ({
+                    ...previous,
+                    [animal]: state.phase === 2 && state.selected ? 'eat' : 'greet',
+                  }));
                   play(animal);
                   onAnimal(animal);
                 }}
@@ -116,7 +100,14 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 >
                   <AnimalArt
                     animal={animal}
-                    happy={servings.length > 0 || !!plays[animal] || state.phase === 3}
+                    happy={state.phase === 3}
+                    gesture={
+                      servings.length > 0 && lastAction[animal] === 'eat'
+                        ? 'eat'
+                        : plays[animal]
+                          ? 'greet'
+                          : undefined
+                    }
                   />
                 </motion.div>
                 <span className="sr-only">
@@ -156,37 +147,7 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 whileHover={{ y: -5 }}
               >
                 <div className="discovery-art">
-                  {item === 'butterfly' && (
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                      <path d="M5 145q0-44 33-36 5-63 49-37 50-15 66 73Z" fill="#8fa676" />
-                      <Flower x={52} y={82} color="#edc7a5" scale={1.6} />
-                      <Flower x={110} y={99} color="#f9e6bc" scale={1.3} />
-                    </svg>
-                  )}
-                  {item === 'frog' && (
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                      <ellipse cx="80" cy="128" rx="76" ry="25" fill="#8cad9c" />
-                      <ellipse cx="80" cy="123" rx="68" ry="17" fill="#b1cdb8" />
-                      <path d="M67 131q-2-23 41-15l-18 11 17 11q-29 7-40-7Z" fill="#8ea870" />
-                    </svg>
-                  )}
-                  {item === 'acorn' && (
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                      <path d="M38 39q45-23 85 0l5 99H30Z" fill="#b89a70" />
-                      <ellipse cx="80" cy="39" rx="43" ry="13" fill="#dfc39a" />
-                      <ellipse
-                        cx="80"
-                        cy="39"
-                        rx="26"
-                        ry="6"
-                        fill="none"
-                        stroke="#c7a877"
-                        strokeWidth="3"
-                      />
-                      <path d="M49 49v69m12-64 2 17m48-19-4 74" stroke="#9f815a" strokeWidth="3" />
-                      <ellipse cx="82" cy="99" rx="21" ry="30" fill="#756548" />
-                    </svg>
-                  )}
+                  <DiscoveryArt item={item} />
                   {found && (
                     <motion.span
                       key={plays[item] ?? 0}

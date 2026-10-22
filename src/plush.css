@@ -1,0 +1,193 @@
+/* A quiet woven surface keeps the interactive plush pieces easy to pick out. */
+:root {
+  --fabric:
+    repeating-linear-gradient(0deg, #ffffff25 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, #405b4710 0 1px, transparent 1px 3px);
+}
+body {
+  background-color: #f5f4ed;
+  background-image: var(--fabric);
+}
+.brand-name {
+  letter-spacing: 0;
+}
+.site-header {
+  border-bottom-style: dashed;
+}
+.picnic-scene {
+  border: 0;
+  border-radius: 0;
+  background: #bfd8b9;
+}
+.picnic-scene .landscape {
+  pointer-events: none;
+}
+.picnic-scene .animal {
+  filter: drop-shadow(0 5px 3px #34513216);
+}
+.animal > div > svg {
+  overflow: visible;
+}
+.animal-playing {
+  animation: none;
+}
+.scene-basket {
+  transform: translateX(-50%);
+}
+.scene-blanket {
+  height: 35%;
+  bottom: 7%;
+  width: 56%;
+  left: 67%;
+}
+.phase-2 .scene-blanket {
+  width: 80%;
+  height: 35%;
+  bottom: 7%;
+}
+.picnic-scene .animal {
+  bottom: 16%;
+}
+.picnic-scene .weather-button {
+  z-index: 4;
+  top: 10px;
+  right: 16px;
+  width: 76px;
+  height: 76px;
+}
+.weather-button > svg {
+  width: 100%;
+  height: 100%;
+}
+.picnic-scene .umbrella {
+  z-index: 1;
+  pointer-events: none;
+}
+.picnic-scene .speech-bubble,
+.sound-toggle,
+.brand-mark {
+  background-color: #f5f4e9;
+  background-image: var(--fabric);
+  box-shadow:
+    inset 0 2px 4px #fff,
+    inset 0 -3px 5px #71867530,
+    0 3px 4px #3c593d20;
+  border: 1px dashed #9cb4a0;
+}
+.progress li {
+  background-color: #eceee4;
+  background-image: var(--fabric);
+  border: 2px dashed #c0c9b5;
+  box-shadow:
+    inset 0 2px 4px #fff,
+    0 3px 4px #405e3d14;
+  opacity: 1;
+}
+.progress li.current {
+  background-color: #e1eee6;
+  border: 3px solid #438c7d;
+  box-shadow:
+    inset 0 0 0 3px #f7faf1,
+    0 4px 0 #9cbcaf;
+}
+.food-tray {
+  background: transparent;
+  border: 0;
+  border-top: 1px dashed #b8c7b0;
+  border-radius: 0;
+}
+.food-option {
+  background-color: #f4f1e5;
+  background-image: var(--fabric);
+  border: 1px dashed #c5bea7;
+  box-shadow:
+    inset 0 2px 4px #fff,
+    inset 0 -3px 4px #c6c1aa40,
+    0 3px 3px #50644714;
+  border-radius: 8px;
+}
+.food-option:hover {
+  background-color: #e6eee0;
+}
+.food-option.selected {
+  background-color: #dcefe5;
+  border-color: #478d7b;
+  box-shadow:
+    inset 0 0 0 2px #5c9e88,
+    0 3px 3px #50644714;
+}
+.food-option > svg {
+  padding: 3px;
+}
+.food-option:active {
+  box-shadow: inset 0 2px 5px #7e94763b;
+}
+.journey-actions {
+  background-color: #f5f4ed;
+  background-image: var(--fabric);
+  border-top-style: dashed;
+}
+.picture-button {
+  position: relative;
+  background-color: #458c7c;
+  background-image: var(--fabric);
+  color: #fff8e9;
+  border: 1px solid #387c6d;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 3px 6px #bce3c45e,
+    inset 0 -4px 5px #235b4a50,
+    0 5px 0 #2c6659;
+}
+.picture-button::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed #e7edcfb3;
+  border-radius: 4px;
+  pointer-events: none;
+}
+.picture-button .icon {
+  filter: drop-shadow(0 2px 1px #234e4b50);
+  stroke-width: 3;
+}
+.picture-button:not(:disabled):active {
+  box-shadow:
+    inset 0 3px 5px #235b4a50,
+    0 2px 0 #2c6659;
+}
+.journey-photo {
+  border-color: #fffdf6;
+}
+.memory-section {
+  background-color: #dce9df;
+  background-image: var(--fabric);
+}
+.discovery-art > svg {
+  height: 150px;
+  filter: drop-shadow(0 5px 3px #385c3930);
+}
+.discovery-question {
+  border: 1px dashed #8dac93;
+  background-image: var(--fabric);
+}
+@media (max-width: 760px) {
+  .phase-2 .scene-blanket {
+    width: 96%;
+  }
+  .discovery-art > svg {
+    height: 110px;
+  }
+}
+@media (max-width: 480px) {
+  .picnic-scene .weather-button {
+    width: 56px;
+    height: 56px;
+  }
+  .phase-0 .scene-blanket {
+    width: 76%;
+  }
+  .discovery-art > svg {
+    height: 94px;
+  }
+}
