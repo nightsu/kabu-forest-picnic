@@ -50,18 +50,76 @@ body {
 }
 .picnic-scene .weather-button {
   z-index: 4;
-  top: 10px;
-  right: 16px;
-  width: 76px;
-  height: 76px;
+  top: 12px;
+  right: auto;
+  left: 70%;
+  translate: -50% 0;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
 }
-.weather-button > svg {
+.weather-art {
+  display: block;
   width: 100%;
   height: 100%;
+  animation: weather-arrive 0.45s ease-out;
+}
+.weather-art > svg {
+  width: 100%;
+  height: 100%;
+}
+.weather-button:hover svg {
+  transform: none;
 }
 .picnic-scene .umbrella {
   z-index: 1;
   pointer-events: none;
+  top: 88px;
+  height: calc(100% - 120px);
+}
+.serving-plate {
+  display: block;
+  position: absolute;
+  left: 50%;
+  bottom: -25px;
+  translate: -50% 0;
+  width: 108%;
+  max-width: 165px;
+  pointer-events: none;
+}
+.serving-plate > svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.plate-food {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: food-land 0.55s ease-out;
+}
+@keyframes food-land {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.7);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.03);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes weather-arrive {
+  from {
+    opacity: 0.5;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 .picnic-scene .speech-bubble,
 .sound-toggle,
@@ -179,15 +237,58 @@ body {
     height: 110px;
   }
 }
+@media (min-width: 481px) and (max-height: 800px) {
+  .picnic-scene .weather-button {
+    top: 8px;
+    left: 72%;
+    width: 104px;
+    height: 104px;
+  }
+  .picnic-scene .umbrella {
+    top: 76px;
+    height: calc(100% - 110px);
+  }
+}
 @media (max-width: 480px) {
   .picnic-scene .weather-button {
+    top: 8px;
+    left: 69%;
+    width: 96px;
+    height: 96px;
+  }
+  .picnic-scene .umbrella {
+    top: 80px;
+    height: calc(100% - 100px);
+  }
+  .serving-plate {
+    bottom: -23px;
+  }
+  .phase-2 .scene-basket {
+    left: 9%;
+    bottom: 1%;
     width: 56px;
-    height: 56px;
+  }
+  .companion-frog {
+    right: 2%;
+    bottom: 0;
+  }
+  .companion-acorn {
+    left: 40%;
+    bottom: 0;
+  }
+  .companion-acorn.gifted {
+    left: 67%;
   }
   .phase-0 .scene-blanket {
     width: 76%;
   }
   .discovery-art > svg {
     height: 94px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .weather-art,
+  .plate-food {
+    animation: none;
   }
 }

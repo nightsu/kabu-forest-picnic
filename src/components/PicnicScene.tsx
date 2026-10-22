@@ -9,13 +9,13 @@ import {
   BasketArt,
   BlanketArt,
   ButterflyArt,
-  FoodArt,
   FrogArt,
   Icon,
   UmbrellaArt,
 } from './Illustrations';
 import { Landscape } from './Landscape';
 import { DiscoveryArt, WeatherArt } from './PlushArt';
+import { ServingArt } from './ServingArt';
 
 interface Props {
   state: PicnicState;
@@ -52,7 +52,9 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
         }
         whileTap={{ scale: 0.9 }}
       >
-        <WeatherArt weather={state.weather} />
+        <span key={state.weather} className="weather-art">
+          <WeatherArt weather={state.weather} />
+        </span>
       </motion.button>
       <button
         className="speech-bubble"
@@ -114,15 +116,18 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                   {animalNames[animal]}
                   {servings.length > 0 && <span className="tiny-heart">♥</span>}
                 </span>
-                {servings.length > 0 && (
+                {state.phase === 2 && (
                   <span
-                    className="animal-treat"
-                    aria-label={`收到${servings.map((item) => foodNames[item.food]).join('、')}`}
+                    className="serving-plate"
+                    role="img"
+                    data-animal-plate={animal}
+                    aria-label={
+                      servings.length
+                        ? `${animalNames[animal]}的餐盘：${servings.map((item) => foodNames[item.food]).join('、')}`
+                        : `${animalNames[animal]}的小餐盘`
+                    }
                   >
-                    <span key={servings.length} className="treat-bite">
-                      <FoodArt food={servings[servings.length - 1]!.food} />
-                    </span>
-                    <span>×{servings.length}</span>
+                    <ServingArt foods={servings.map((item) => item.food)} />
                   </span>
                 )}
               </motion.button>

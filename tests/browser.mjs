@@ -45,6 +45,17 @@ try {
     await page.goto(base);
     await page.getByRole('heading', { name: '装好篮子' }).waitFor();
     await assertOneScreen(page);
+    const weather = await page.locator('.weather-button').boundingBox();
+    const sceneBounds = await page.locator('.picnic-scene').boundingBox();
+    assert.ok(
+      weather.width >= 88 && weather.height >= 88,
+      'Weather has a prominent child-sized target',
+    );
+    assert.ok(
+      sceneBounds.x + sceneBounds.width - weather.x - weather.width >= 24,
+      'Weather has breathing room away from the corner',
+    );
+    assert.ok(weather.x > sceneBounds.x + sceneBounds.width / 2, 'Weather lives in the open sky');
     assert.equal(
       await page.locator('.step-number').count(),
       0,
@@ -98,6 +109,9 @@ try {
     await page.getByRole('button', { name: '看看池塘里的朋友' }).click();
     await page.getByRole('button', { name: '敲敲树洞' }).click();
     await page.getByRole('button', { name: '去野餐' }).click();
+    await page.locator('.serving-plate').first().waitFor();
+    assert.equal(await page.locator('.serving-plate').count(), 3, 'Each friend has a small plate');
+    assert.equal(await page.locator('.animal-treat').count(), 0, 'No food count badges');
     const picnicNextBox = await page.getByRole('button', { name: '拍张纪念照' }).boundingBox();
     assert.ok(Math.abs(picnicNextBox.y - nextBox.y) < 2, 'Picnic keeps the same navigation anchor');
     await page.getByRole('button', { name: '和蝴蝶玩', exact: true }).click();
@@ -122,6 +136,18 @@ try {
     assert.equal(await page.getByRole('button', { name: '苹果已分享' }).isDisabled(), true);
     await page.getByRole('button', { name: '选择面包' }).click();
     await page.getByRole('button', { name: '小兔', exact: true }).click();
+    assert.deepEqual(
+      await page
+        .locator('[data-animal-plate="rabbit"] [data-plate-food]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-plate-food'))),
+      ['bread'],
+    );
+    assert.deepEqual(
+      await page
+        .locator('[data-animal-plate="bear"] [data-plate-food]')
+        .evaluateAll((items) => items.map((item) => item.getAttribute('data-plate-food'))),
+      ['apple'],
+    );
     // Motion's transform must not overwrite CSS centering after a tap/hover.
     await page.mouse.move(0, 0);
     await page.waitForFunction(() =>
@@ -160,6 +186,11 @@ try {
     const photoNextBox = await page.getByRole('button', { name: '再去野餐' }).boundingBox();
     assert.ok(Math.abs(photoNextBox.y - nextBox.y) < 2, 'Photo keeps the same navigation anchor');
     assert.equal(await page.locator('[data-memory-discovery]').count(), 3);
+    assert.equal(
+      await page.locator('[data-memory-plate="bear"] [data-plate-food="apple"]').count(),
+      1,
+      'Photo preserves food ownership',
+    );
     const download = page.waitForEvent('download');
     await page.getByRole('button', { name: '保存纪念照' }).click();
     const photo = await download;
@@ -267,6 +298,61 @@ try {
     );
   }
   await touchContext.close();
+  const sharing = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    reducedMotion: 'reduce',
+  });
+  const meal = await sharing.newPage();
+  meal.on('pageerror', (error) => failures.push(error.message));
+  await meal.goto(base);
+  for (const food of ['苹果', '香蕉', '面包', '草莓', '胡萝卜', '水壶']) {
+    await meal.getByRole('button', { name: `装入${food}`, exact: true }).click();
+  }
+  await meal.getByRole('button', { name: '出发去森林', exact: true }).click();
+  await meal.getByRole('button', { name: '去野餐', exact: true }).click();
+  for (const food of ['苹果', '香蕉', '面包', '草莓', '胡萝卜', '水壶']) {
+    await meal.getByRole('button', { name: `选择${food}`, exact: true }).click();
+    await meal.getByRole('button', { name: '小兔', exact: true }).click();
+  }
+  await meal.reload();
+  const plate = meal.locator('[data-animal-plate="rabbit"]');
+  assert.equal(
+    await plate.locator('[data-plate-food]').count(),
+    6,
+    'One friend can receive all six distinct foods',
+  );
+  assert.equal(
+    await plate.innerText(),
+    '',
+    'Food sharing uses pictures without multiplication or numbers',
+  );
+  await assertOneScreen(meal);
+  await meal.screenshot({ path: join(output, 'plate-six-390.png'), fullPage: true });
+  const fur = await meal.evaluate(async () => {
+    const results = [];
+    for (const [animal, x, y] of [
+      ['bear', 196, 480],
+      ['squirrel', 164, 780],
+    ]) {
+      const source = document.querySelector(`.animal-${animal} image`).getAttribute('href');
+      const image = new Image();
+      image.src = source;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      results.push([...context.getImageData(x, y, 1, 1).data]);
+    }
+    return results;
+  });
+  assert.ok(fur[0][0] - fur[0][2] > 45, 'Bear keeps warm caramel fur');
+  assert.ok(Math.abs(fur[1][0] - fur[1][2]) < 25, 'Squirrel has distinct silver-gray fur');
+  await sharing.close();
+  console.log(
+    'PASS persistent picture plates, six foods for one friend, and distinct character colors',
+  );
   assert.deepEqual(failures, []);
   console.log('PASS touch companions, keyboard gestures, reduced motion, and optional exploration');
 } finally {

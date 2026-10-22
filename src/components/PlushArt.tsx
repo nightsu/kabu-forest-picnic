@@ -7,6 +7,7 @@ export const plushAssets = {
   small: `${import.meta.env.BASE_URL}art/plush/small.webp`,
   forest: `${import.meta.env.BASE_URL}art/plush/forest.webp`,
   friends: `${import.meta.env.BASE_URL}art/plush/friends.webp`,
+  squirrel: `${import.meta.env.BASE_URL}art/plush/friends-silver.webp`,
   explore: `${import.meta.env.BASE_URL}art/plush/explore.webp`,
 };
 
@@ -25,6 +26,7 @@ const sizes: Record<Atlas, readonly [number, number]> = {
   small: [1254, 1254],
   forest: [1536, 1024],
   friends: [1447, 1087],
+  squirrel: [1448, 1086],
   explore: [1536, 1024],
 };
 
@@ -120,7 +122,7 @@ export function AnimalArt({
     >
       <ellipse cx="80" cy="191" rx="49" ry="5" fill="#37593c" opacity=".13" />
       <PlushSprite
-        atlas="friends"
+        atlas={animal === 'squirrel' ? 'squirrel' : 'friends'}
         crop={crop}
         x={80 - (bodyCenters[animal][pose]! - crop[0]) * scale}
         y={193 - crop[3] * scale}

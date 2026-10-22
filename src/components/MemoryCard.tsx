@@ -4,13 +4,13 @@ import {
   AnimalArt,
   BlanketArt,
   ButterflyArt,
-  FoodArt,
   FrogArt,
   UmbrellaArt,
 } from './Illustrations';
 import type { PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
 import { WeatherArt } from './PlushArt';
+import { ServingArt } from './ServingArt';
 
 /** Shared composition; exportMemory embeds the raster artwork before PNG export. */
 export function MemoryCard({ state, date }: { state: PicnicState; date: string }) {
@@ -33,7 +33,7 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
         preserveAspectRatio="xMidYMid slice"
       >
         <Landscape weather={state.weather} />
-        <svg x="840" y="30" width="80" height="80" viewBox="0 0 100 100">
+        <svg x="865" y="24" width="115" height="115" viewBox="0 0 100 100">
           <WeatherArt weather={state.weather} />
         </svg>
         {state.weather === 'rain' && <UmbrellaArt x={280} y={5} width={620} height={490} />}
@@ -49,15 +49,16 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
             height={224}
           />
         ))}
-        {state.served.map((item, i) => (
-          <FoodArt
-            key={item.food}
-            food={item.food}
-            x={405 + (i % 6) * 65}
-            y={382}
-            width={65}
-            height={65}
-          />
+        {ANIMALS.map((animal, i) => (
+          <g key={animal} data-memory-plate={animal}>
+            <ServingArt
+              foods={state.served.filter((item) => item.animal === animal).map((item) => item.food)}
+              x={370 + i * 158}
+              y={358}
+              width={150}
+              height={84}
+            />
+          </g>
         ))}
         {state.discoveries.map((item) => (
           <svg
