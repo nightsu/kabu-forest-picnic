@@ -3,11 +3,12 @@ import { useState } from 'react';
 import type { Animal, Discovery, PicnicAction, PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
 import { animalNames, discoveryNames, foodNames } from '../game/content';
-import { AnimalArt, BasketArt, BlanketArt, Icon, UmbrellaArt } from './Illustrations';
+import { AnimalArt, BasketArt, BlanketArt, Icon } from './Illustrations';
 import { Landscape } from './Landscape';
 import { DiscoveryArt, WeatherArt } from './PlushArt';
 import { ServingArt } from './ServingArt';
 import { DiscoveryFriend } from './DiscoveryFriend';
+import { PicnicShelter } from './PicnicShelter';
 
 interface Props {
   state: PicnicState;
@@ -220,7 +221,7 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 />
               ))}
           </svg>
-          {state.phase !== 1 && <UmbrellaArt className="umbrella" />}
+          {state.phase !== 1 && <PicnicShelter />}
         </>
       )}
     </section>

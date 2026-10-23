@@ -172,13 +172,37 @@ export function BasketArt({
   );
 }
 
-export function UmbrellaArt(props: ArtProps) {
+export function UmbrellaArt({
+  layer = 'all',
+  ...props
+}: ArtProps & { layer?: 'all' | 'pole' | 'canopy' | 'canopy-back' }) {
   const id = useId();
   return (
-    <svg viewBox="0 0 600 330" preserveAspectRatio="none" aria-hidden="true" {...props}>
+    <svg
+      viewBox={
+        layer === 'canopy' || layer === 'canopy-back'
+          ? '0 0 600 120'
+          : layer === 'pole'
+            ? '0 120 600 210'
+            : '0 0 600 330'
+      }
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      {...props}
+    >
       <defs>
         <clipPath id={id}>
-          <path d="M0 0H600V120H325V330H270V120H0Z" />
+          <path
+            d={
+              layer === 'canopy'
+                ? 'M0 0H600V120H330Q310 100 299 100Q288 100 268 120H0Z'
+                : layer === 'canopy-back'
+                  ? 'M0 0H600V120H0Z'
+                  : layer === 'pole'
+                    ? 'M270 120H325V330H270Z'
+                    : 'M0 0H600V120H325V330H270V120H0Z'
+            }
+          />
         </clipPath>
       </defs>
       <g clipPath={`url(#${id})`}>

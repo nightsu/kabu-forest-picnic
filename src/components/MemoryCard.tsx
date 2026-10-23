@@ -36,7 +36,12 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
         <svg x="865" y="24" width="115" height="115" viewBox="0 0 100 100">
           <WeatherArt weather={state.weather} />
         </svg>
-        {state.weather === 'rain' && <UmbrellaArt x={280} y={5} width={620} height={490} />}
+        {state.weather === 'rain' && (
+          <>
+            <UmbrellaArt layer="pole" x={295} y={227} width={620} height={260} />
+            <UmbrellaArt layer="canopy-back" x={295} y={78} width={620} height={167} />
+          </>
+        )}
         <BlanketArt color={state.blanket} x={280} y={300} width={650} height={190} />
         {ANIMALS.map((animal, i) => (
           <AnimalArt
@@ -61,6 +66,16 @@ export function MemoryCard({ state, date }: { state: PicnicState; date: string }
             />
           </g>
         ))}
+        {state.weather === 'rain' && (
+          <UmbrellaArt
+            layer="canopy"
+            className="memory-canopy"
+            x={295}
+            y={78}
+            width={620}
+            height={167}
+          />
+        )}
         {state.discoveries
           .filter((item) => item !== 'acorn' || !state.acornGifted)
           .map((item) => (

@@ -172,16 +172,43 @@ try {
     });
     assert.equal(centered, true, 'Animals stay centered on their scene anchors after interaction');
     await page.getByRole('button', { name: '变成下雨天' }).click();
-    const shelter = await page.locator('.umbrella').boundingBox();
+    assert.equal(
+      await page.locator('.umbrella-canopy').count(),
+      1,
+      'Rain has a foreground canopy to overlap the heads',
+    );
+    const shelter = await page.locator('.umbrella-canopy').boundingBox();
     for (const animal of ['rabbit', 'bear', 'squirrel']) {
       const friend = await page.locator(`.animal-${animal}`).boundingBox();
       assert.ok(
-        shelter.y + shelter.height / 3 <= friend.y + friend.height * 0.15,
-        'Canopy stays above the heads on short screens',
+        shelter.y + shelter.height >= friend.y + friend.height * 0.12 &&
+          shelter.y + shelter.height <= friend.y + friend.height * 0.46,
+        'The front edge overlaps only the top of the head, keeping the face visible',
       );
       assert.ok(
         shelter.x <= friend.x && shelter.x + shelter.width >= friend.x + friend.width,
         'Canopy spans all picnic friends',
+      );
+    }
+    assert.equal(
+      await page.locator('.umbrella-canopy').evaluate((el) => getComputedStyle(el).pointerEvents),
+      'none',
+      'Shelter lets taps pass through to friends',
+    );
+    assert.ok(
+      (await page
+        .locator('.umbrella-canopy')
+        .evaluate((el) => Number(getComputedStyle(el).zIndex))) >
+        (await page.locator('.animal-bear').evaluate((el) => Number(getComputedStyle(el).zIndex))),
+      'Canopy is in front of the animals',
+    );
+    for (const part of ['.umbrella-pole', '.umbrella-canopy-back']) {
+      assert.ok(
+        (await page.locator(part).evaluate((el) => Number(getComputedStyle(el).zIndex))) <
+          (await page
+            .locator('.animal-bear')
+            .evaluate((el) => Number(getComputedStyle(el).zIndex))),
+        'The pole and rear canopy stay behind the bear',
       );
     }
     await page.screenshot({

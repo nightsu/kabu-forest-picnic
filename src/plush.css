@@ -75,11 +75,29 @@ body {
 .weather-button:hover svg {
   transform: none;
 }
-.picnic-scene .umbrella {
-  z-index: 1;
+.shelter-anchor {
+  display: contents;
+}
+.picnic-scene .shelter-anchor .umbrella {
   pointer-events: none;
-  top: 88px;
-  height: calc(100% - 120px);
+  left: var(--shelter-center);
+  width: var(--shelter-width);
+}
+.picnic-scene .shelter-anchor .umbrella-pole {
+  z-index: 1;
+  top: var(--pole-top);
+  height: var(--pole-height);
+}
+.picnic-scene .shelter-anchor .umbrella-canopy,
+.picnic-scene .shelter-anchor .umbrella-canopy-back {
+  top: var(--shelter-top);
+  height: var(--shelter-height);
+}
+.picnic-scene .shelter-anchor .umbrella-canopy {
+  z-index: 3;
+}
+.picnic-scene .shelter-anchor .umbrella-canopy-back {
+  z-index: 1;
 }
 .serving-plate {
   display: block;
@@ -428,10 +446,6 @@ body {
     width: 104px;
     height: 104px;
   }
-  .picnic-scene .umbrella {
-    top: 76px;
-    height: calc(100% - 110px);
-  }
 }
 @media (max-width: 480px) {
   .picnic-scene .weather-button {
@@ -439,10 +453,6 @@ body {
     left: 69%;
     width: 96px;
     height: 96px;
-  }
-  .picnic-scene .umbrella {
-    top: 80px;
-    height: calc(100% - 100px);
   }
   .serving-plate {
     bottom: -23px;
