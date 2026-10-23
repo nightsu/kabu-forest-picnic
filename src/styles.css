@@ -496,17 +496,6 @@ h1:focus {
   left: 25%;
   max-width: 49%;
 }
-.friend-playing {
-  animation: friend-hop 0.75s ease-in-out;
-}
-.discovery-butterfly .friend-playing,
-.companion-butterfly .friend-playing {
-  animation-name: butterfly-flutter;
-}
-.discovery-acorn .friend-playing,
-.companion-acorn .friend-playing {
-  animation-name: friend-turn;
-}
 .picnic-companions {
   position: absolute;
   inset: 0;
@@ -560,53 +549,6 @@ h1:focus {
   right: 0;
   top: 0;
   color: #bf645e;
-}
-@keyframes friend-hop {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(-18px) rotate(-4deg);
-  }
-  65% {
-    transform: translateY(-8px) rotate(4deg);
-  }
-}
-@keyframes friend-sway {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  25%,
-  70% {
-    transform: rotate(-9deg);
-  }
-  45%,
-  85% {
-    transform: rotate(9deg);
-  }
-}
-@keyframes friend-turn {
-  0%,
-  100% {
-    transform: scaleX(1);
-  }
-  40% {
-    transform: scaleX(-1) translateY(-7px);
-  }
-}
-@keyframes butterfly-flutter {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  30% {
-    transform: translate(24px, -18px) rotate(12deg);
-  }
-  65% {
-    transform: translate(-15px, -10px) rotate(-12deg);
-  }
 }
 @keyframes treat-bite {
   0%,

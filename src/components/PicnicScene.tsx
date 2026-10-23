@@ -3,19 +3,11 @@ import { useState } from 'react';
 import type { Animal, Discovery, PicnicAction, PicnicState } from '../game/model';
 import { ANIMALS } from '../game/model';
 import { animalNames, discoveryNames, foodNames } from '../game/content';
-import {
-  AcornArt,
-  AnimalArt,
-  BasketArt,
-  BlanketArt,
-  ButterflyArt,
-  FrogArt,
-  Icon,
-  UmbrellaArt,
-} from './Illustrations';
+import { AnimalArt, BasketArt, BlanketArt, Icon, UmbrellaArt } from './Illustrations';
 import { Landscape } from './Landscape';
 import { DiscoveryArt, WeatherArt } from './PlushArt';
 import { ServingArt } from './ServingArt';
+import { DiscoveryFriend } from './DiscoveryFriend';
 
 interface Props {
   state: PicnicState;
@@ -159,21 +151,9 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                 <div className="discovery-art">
                   <DiscoveryArt item={item} />
                   {found && (
-                    <motion.span
-                      key={plays[item] ?? 0}
-                      className={`found-friend ${plays[item] ? 'friend-playing' : ''}`}
-                      initial={{ y: 20, scale: 0 }}
-                      animate={{ y: 0, scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 230, damping: 14 }}
-                    >
-                      {item === 'butterfly' ? (
-                        <ButterflyArt />
-                      ) : item === 'frog' ? (
-                        <FrogArt />
-                      ) : (
-                        <AcornArt />
-                      )}
-                    </motion.span>
+                    <span className="found-friend">
+                      <DiscoveryFriend item={item} playCount={plays[item] ?? 0} />
+                    </span>
                   )}
                   {!found && <span className="discovery-question">?</span>}
                 </div>
@@ -207,15 +187,7 @@ export function PicnicScene({ state, message, onAction, onAnimal, onDiscover, on
                   } else onDiscover(item);
                 }}
               >
-                <span key={plays[item] ?? 0} className={plays[item] ? 'friend-playing' : ''}>
-                  {item === 'butterfly' ? (
-                    <ButterflyArt />
-                  ) : item === 'frog' ? (
-                    <FrogArt />
-                  ) : (
-                    <AcornArt />
-                  )}
-                </span>
+                <DiscoveryFriend item={item} playCount={plays[item] ?? 0} />
                 {item === 'acorn' && !state.acornGifted && (
                   <span className="sr-only">送给小松鼠</span>
                 )}
