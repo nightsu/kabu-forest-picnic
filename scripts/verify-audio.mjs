@@ -4,7 +4,7 @@ const lines = JSON.parse(await readFile(new URL('src/game/voiceLines.json', root
 const missing = [];
 for (const line of lines) {
   try {
-    const bytes = await readFile(new URL(`public/audio/${line.id}.mp3`, root));
+    const bytes = await readFile(new URL(`src/assets/audio/${line.id}.mp3`, root));
     const isMp3 =
       bytes.subarray(0, 3).toString() === 'ID3' ||
       (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0);

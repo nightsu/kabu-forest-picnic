@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { VoicePlayer } from '../lib/VoicePlayer';
+import { recordingUrls } from '../assets/recordings';
 
 export function useAudio() {
   const [enabled, setEnabled] = useState(() => {
@@ -16,7 +17,7 @@ export function useAudio() {
   const speak = useCallback(
     (text: string) => {
       if (!enabled) return;
-      player.current ??= new VoicePlayer(import.meta.env.BASE_URL);
+      player.current ??= new VoicePlayer((id) => recordingUrls[id]!);
       player.current.speak(text);
     },
     [enabled],

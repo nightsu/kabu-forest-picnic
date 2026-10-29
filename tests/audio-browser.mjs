@@ -16,7 +16,9 @@ try {
     const page = await context.newPage();
     page.on('pageerror', (error) => failures.push(error.message));
     const external = [];
+    const audioRequests = [];
     page.on('request', (request) => {
+      if (/\.mp3(?:\?|$)/.test(request.url())) audioRequests.push(request.url());
       if (new URL(request.url()).origin !== new URL(base).origin) external.push(request.url());
     });
     await page.addInitScript(() => {
@@ -32,6 +34,7 @@ try {
       };
     });
     await page.goto(base);
+    assert.deepEqual(audioRequests, [], 'Narration is not downloaded before interaction');
     const click = async (name) => {
       const button = page.getByRole('button', { name, exact: true });
       if (mobile) await button.tap();
@@ -43,7 +46,7 @@ try {
     );
     assert.match(
       await page.evaluate(() => window.__voiceClips.at(-1).src),
-      /audio\/pack-apple\.mp3$/,
+      /(?:audio\/pack-apple|assets\/pack-apple-[\w-]+)\.mp3$/,
     );
     await click('装入面包');
     await page.waitForFunction(() => window.__voiceClips.at(-1)?.currentTime > 0);
@@ -66,9 +69,11 @@ try {
     await page.waitForFunction(() => window.__voiceClips.at(-1)?.currentTime > 0);
     assert.match(
       await page.evaluate(() => window.__voiceClips.at(-1).src),
-      /audio\/unpack-apple\.mp3$/,
+      /(?:audio\/unpack-apple|assets\/unpack-apple-[\w-]+)\.mp3$/,
     );
-    await page.route('**/audio/pack-banana.mp3', (route) => route.abort());
+    await page.route(/\/(?:audio\/pack-banana|assets\/pack-banana-[\w-]+)\.mp3$/, (route) =>
+      route.abort(),
+    );
     await click('装入香蕉');
     await page.getByRole('button', { name: '取出香蕉', exact: true }).waitFor();
     await page.waitForFunction(() => Boolean(window.__voiceClips.at(-1)?.error));

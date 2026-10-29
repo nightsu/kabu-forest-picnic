@@ -19,7 +19,7 @@ const selected = only ? lines.filter((line) => only.includes(line.id)) : lines;
 const pending = [];
 for (const line of selected) {
   try {
-    await access(join(root, `public/audio/${line.id}.mp3`));
+    await access(join(root, `src/assets/audio/${line.id}.mp3`));
   } catch {
     pending.push(line);
   }
@@ -47,7 +47,7 @@ if (!key)
 const ffmpeg = process.env.FFMPEG_PATH || 'ffmpeg';
 if (spawnSync(ffmpeg, ['-version'], { stdio: 'ignore' }).status !== 0)
   throw new Error('Install ffmpeg before generation.');
-await mkdir(join(root, 'public/audio'), { recursive: true });
+await mkdir(join(root, 'src/assets/audio'), { recursive: true });
 const temporary = await mkdtemp(join(tmpdir(), 'kabu-voice-'));
 try {
   for (const line of pending) {
@@ -110,7 +110,7 @@ try {
       { encoding: 'utf8' },
     );
     if (conversion.status !== 0) throw new Error(`Audio conversion failed at ${line.id}`);
-    await writeFile(join(root, `public/audio/${line.id}.mp3`), await readFile(mp3));
+    await writeFile(join(root, `src/assets/audio/${line.id}.mp3`), await readFile(mp3));
     console.log(
       `Saved ${line.id}.mp3 (${result.usage?.characters ?? [...line.text].length} characters)`,
     );

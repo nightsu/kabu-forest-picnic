@@ -1,12 +1,12 @@
 # Plush Art Direction
 
-Generated with the built-in image_gen tool from the accepted plush picnic preview. Source PNGs remain in the generation archive; the game uses WebP copies (quality 88, lossless alpha). Sprites are cropped at render time, with no baked UI or food in the character assets.
+Generated with the built-in image_gen tool from the accepted plush picnic preview. Source PNGs remain in the generation archive; the editable source atlases are preserved in `art/source/` as WebP copies. The build uses WebP quality 88 and lossless alpha, preserving the source pixel resolution. Sprites are trimmed and repacked at build time, with no baked UI or food in the character assets.
 
 ## Prompts
 
 ### Silver Squirrel Color Revision
 
-Only the squirrel crops use `friends-silver.webp`; the rabbit and bear keep the original atlas. Generated with the built-in image_gen edit tool, then compressed to WebP with lossless alpha. The 1448 x 1086 output uses the existing pose coordinates.
+The recipe takes only the squirrel crops from `friends-silver.webp` and only the rabbit and bear crops from the original atlas. All twelve used poses are packed into one generated atlas; unused characters in the two source files are not shipped. Generated with the built-in image_gen edit tool, then compressed to WebP with lossless alpha. The 1448 x 1086 output uses the existing pose coordinates.
 
 Edit the provided production sprite atlas. COLOR CHANGE ONLY. Preserve the exact image dimensions, transparent background, all character positions, sizes, silhouette boundaries, pose order, facial features and texture. Do not rearrange or redraw any shapes. Keep the entire top row of four white rabbits and middle row of four caramel bears unchanged. In ONLY the bottom row of four squirrels, recolor their orange/brown fur and curled tails to a medium SILVER GRAY, keeping highlights and plush fur detail. Keep their cream-white muzzle and belly, pink cheeks, dark embroidered eyes and brown paw pads. Recolor their green triangular neckerchief to a soft muted LAVENDER purple. All four squirrel poses must have the same gray fur and lavender scarf. Tail stays clearly darker gray than the cream belly. Keep genuine alpha transparency; no background, no text, no extra objects. The output must fit the same sprite coordinates as the input so the existing animations remain aligned.
 
@@ -33,3 +33,15 @@ Edit this sprite sheet into a clean production animation atlas. Preserve the EXA
 ### Explore
 
 Transparent game prop sprite atlas, EXACT 3 columns by 2 rows equal square cells, landscape 3:2. Each object centered within its square with 12% fully transparent padding, completely separated, no shared ground or overlap. Top row: small felt flower bush with three large peach/ivory daisies; a small flat oval mint blue fabric pond with stitched ripples and one green lily pad; a soft brown felt tree stump with dark oval hollow in its front, wood rings on top. Bottom row: round smiling golden felt sun with eight soft short rays and tiny embroidered friendly face; a puffy white plush raincloud with three blue fabric raindrops suspended below; a cluster of three small green felt forest trees on a tiny green felt patch with a winding golden path. No animals, no other props, no text, no UI, no labels, no grid. Same tactile handcrafted wool felt material and gentle diffuse daylight as reference. Clear silhouettes, individual nursery toy objects rendered front slightly above, no floor, no shadows outside objects, genuine transparent alpha background.
+
+## Reproducible delivery assets
+
+- Sources: `art/source/`. The original files remain unchanged; generated WebPs never become inputs to another compression pass.
+- Recipe: `art/recipe.json`. Each sprite has a stable semantic name, source rectangle and optional body anchor. A new isolated source image can also be used with a full-image rectangle.
+- Run `npm run art:build`. Lifecycle hooks run it before dev, check, test and build; a fingerprint skips unchanged inputs. Keep using the documented npm commands when cloning afresh.
+- Output: ignored `src/assets/plush/`, including typed `artwork.ts`. Alpha trimming retains even alpha=1 pixels; two pixels of padding surround each packed sprite. The renderer restores original frame sizes and offsets so packing does not change scene placement.
+- Vite imports the generated images and recordings, emitting content-hashed URLs. SVG photo export still embeds each referenced atlas only once.
+- The current sources total 2,034,420 bytes; the first optimized five-image output totals 1,513,350 bytes (25.6% less). This is the complete image set, not the first-visit network transfer. No resolution reduction was applied.
+- Always check the game at mobile and desktop sizes, gesture anchoring, fur edges, layering, and the exported 1800 × 1260 PNG after changing the recipe or compression.
+
+The local example at `/examples/motion.html` now plays the original and repacked squirrel sprites in sync, including both greeting and eating responses. All four poses, expressions, anchors, and timing are retained. The masked-tail rotation experiment was withdrawn because it removed the arm and facial response and was not a suitable replacement for the full gestures. Future rigging needs properly separated and repainted source layers, followed by visual acceptance against the original animation.

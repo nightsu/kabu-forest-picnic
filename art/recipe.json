@@ -1,0 +1,171 @@
+{
+  "forest": "forest.webp",
+  "groups": {
+    "props": {
+      "basket": {
+        "source": "props.webp",
+        "crop": [35, 568, 460, 412]
+      },
+      "umbrella": {
+        "source": "props.webp",
+        "crop": [515, 540, 506, 453]
+      },
+      "blanket": {
+        "source": "props.webp",
+        "crop": [1002, 705, 534, 250]
+      }
+    },
+    "small": {
+      "apple": {
+        "source": "small.webp",
+        "crop": [0, 0, 418, 418]
+      },
+      "banana": {
+        "source": "small.webp",
+        "crop": [418, 0, 472, 418]
+      },
+      "carrot": {
+        "source": "small.webp",
+        "crop": [890, 0, 364, 418]
+      },
+      "bread": {
+        "source": "small.webp",
+        "crop": [0, 418, 418, 418]
+      },
+      "strawberry": {
+        "source": "small.webp",
+        "crop": [418, 418, 418, 418]
+      },
+      "water": {
+        "source": "small.webp",
+        "crop": [836, 418, 418, 418]
+      },
+      "butterfly": {
+        "source": "small.webp",
+        "crop": [0, 836, 440, 418]
+      },
+      "frog": {
+        "source": "small.webp",
+        "crop": [440, 850, 430, 370]
+      },
+      "acorn": {
+        "source": "small.webp",
+        "crop": [890, 836, 364, 418]
+      }
+    },
+    "friends": {
+      "rabbit0": {
+        "source": "friends.webp",
+        "crop": [30, 35, 310, 350],
+        "anchor": 168
+      },
+      "rabbit1": {
+        "source": "friends.webp",
+        "crop": [400, 35, 310, 350],
+        "anchor": 152
+      },
+      "rabbit2": {
+        "source": "friends.webp",
+        "crop": [755, 35, 310, 350],
+        "anchor": 140
+      },
+      "rabbit3": {
+        "source": "friends.webp",
+        "crop": [1110, 35, 310, 350],
+        "anchor": 139
+      },
+      "bear0": {
+        "source": "friends.webp",
+        "crop": [45, 416, 302, 290],
+        "anchor": 151
+      },
+      "bear1": {
+        "source": "friends.webp",
+        "crop": [397, 416, 307, 290],
+        "anchor": 153
+      },
+      "bear2": {
+        "source": "friends.webp",
+        "crop": [750, 416, 320, 290],
+        "anchor": 141
+      },
+      "bear3": {
+        "source": "friends.webp",
+        "crop": [1100, 416, 330, 290],
+        "anchor": 148
+      },
+      "squirrel0": {
+        "source": "friends-silver.webp",
+        "crop": [55, 724, 320, 310],
+        "anchor": 109
+      },
+      "squirrel1": {
+        "source": "friends-silver.webp",
+        "crop": [405, 724, 340, 310],
+        "anchor": 129
+      },
+      "squirrel2": {
+        "source": "friends-silver.webp",
+        "crop": [750, 724, 330, 310],
+        "anchor": 140
+      },
+      "squirrel3": {
+        "source": "friends-silver.webp",
+        "crop": [1130, 724, 310, 310],
+        "anchor": 117
+      }
+    },
+    "explore": {
+      "flowers": {
+        "source": "explore.webp",
+        "crop": [0, 62, 512, 391]
+      },
+      "pond": {
+        "source": "explore.webp",
+        "crop": [512, 100, 518, 353]
+      },
+      "stump": {
+        "source": "explore.webp",
+        "crop": [1040, 80, 496, 373]
+      },
+      "sun": {
+        "source": "explore.webp",
+        "crop": [12, 475, 488, 475]
+      },
+      "rain": {
+        "source": "explore.webp",
+        "crop": [529, 484, 494, 475]
+      },
+      "forest": {
+        "source": "explore.webp",
+        "crop": [1040, 500, 496, 465]
+      }
+    },
+    "motion": {
+      "butterflyLeft": {
+        "source": "butterfly-parts-v1.png",
+        "crop": [0, 0, 362, 362]
+      },
+      "butterflyBody": {
+        "source": "butterfly-parts-v1.png",
+        "crop": [362, 0, 362, 362]
+      },
+      "butterflyRight": {
+        "source": "butterfly-parts-v1.png",
+        "crop": [724, 0, 362, 362]
+      },
+      "frogCrouch": {
+        "source": "frog-motion-v1.png",
+        "crop": [440, 25, 280, 220]
+      },
+      "frogLeap": {
+        "source": "frog-motion-v1.png",
+        "crop": [50, 245, 325, 250]
+      },
+      "frogLand": {
+        "source": "frog-motion-v1.png",
+        "crop": [440, 275, 305, 225]
+      }
+    }
+  }
+}

@@ -2,14 +2,7 @@ import { useEffect, useId, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 import type { Animal, Blanket, Discovery, Food, Weather } from '../game/model';
 
-export const plushAssets = {
-  props: `${import.meta.env.BASE_URL}art/plush/props.webp`,
-  small: `${import.meta.env.BASE_URL}art/plush/small.webp`,
-  forest: `${import.meta.env.BASE_URL}art/plush/forest.webp`,
-  friends: `${import.meta.env.BASE_URL}art/plush/friends.webp`,
-  squirrel: `${import.meta.env.BASE_URL}art/plush/friends-silver.webp`,
-  explore: `${import.meta.env.BASE_URL}art/plush/explore.webp`,
-};
+import { sprites, type SpriteName } from '../assets/plush/artwork';
 
 type ArtProps = {
   preserveAspectRatio?: string;
@@ -19,73 +12,31 @@ type ArtProps = {
   width?: number;
   height?: number;
 };
-type Crop = readonly [number, number, number, number];
-type Atlas = keyof typeof plushAssets;
-const sizes: Record<Atlas, readonly [number, number]> = {
-  props: [1536, 1024],
-  small: [1254, 1254],
-  forest: [1536, 1024],
-  friends: [1447, 1087],
-  squirrel: [1448, 1086],
-  explore: [1536, 1024],
-};
 
-/** Crop at render time so each sprite keeps its original transparent pixels. */
-export function PlushSprite({ atlas, crop, ...props }: ArtProps & { atlas: Atlas; crop: Crop }) {
-  const id = useId();
+/** Restore trimmed pixels to their source frame; layout never depends on atlas packing. */
+export function PlushSprite({ name, ...props }: ArtProps & { name: SpriteName }) {
+  const sprite = sprites[name];
   return (
-    <svg viewBox={crop.join(' ')} aria-hidden="true" {...props}>
-      <defs>
-        <clipPath id={id}>
-          <rect x={crop[0]} y={crop[1]} width={crop[2]} height={crop[3]} />
-        </clipPath>
-      </defs>
-      <g clipPath={`url(#${id})`}>
-        <image href={plushAssets[atlas]} width={sizes[atlas][0]} height={sizes[atlas][1]} />
-      </g>
+    <svg viewBox={`0 0 ${sprite.size[0]} ${sprite.size[1]}`} aria-hidden="true" {...props}>
+      <svg
+        x={sprite.offset[0]}
+        y={sprite.offset[1]}
+        width={sprite.region[2]}
+        height={sprite.region[3]}
+        viewBox={sprite.region.join(' ')}
+        overflow="hidden"
+      >
+        <image href={sprite.src} width={sprite.sheet[0]} height={sprite.sheet[1]} />
+      </svg>
     </svg>
   );
 }
 
-const foodCrops: Record<Food, Crop> = {
-  apple: [0, 0, 418, 418],
-  banana: [418, 0, 472, 418],
-  carrot: [890, 0, 364, 418],
-  bread: [0, 418, 418, 418],
-  strawberry: [418, 418, 418, 418],
-  water: [836, 418, 418, 418],
-};
-
 export function FoodArt({ food, ...props }: ArtProps & { food: Food }) {
-  return <PlushSprite atlas="small" crop={foodCrops[food]} {...props} />;
+  return <PlushSprite name={food} {...props} />;
 }
 
 export type AnimalGesture = 'greet' | 'eat';
-const poses: Record<Animal, readonly Crop[]> = {
-  rabbit: [
-    [30, 35, 310, 350],
-    [400, 35, 310, 350],
-    [755, 35, 310, 350],
-    [1110, 35, 310, 350],
-  ],
-  bear: [
-    [45, 416, 302, 290],
-    [397, 416, 307, 290],
-    [750, 416, 320, 290],
-    [1100, 416, 330, 290],
-  ],
-  squirrel: [
-    [55, 724, 320, 310],
-    [405, 724, 340, 310],
-    [750, 724, 330, 310],
-    [1130, 724, 310, 310],
-  ],
-};
-const bodyCenters: Record<Animal, readonly number[]> = {
-  rabbit: [198, 552, 895, 1249],
-  bear: [196, 550, 891, 1248],
-  squirrel: [164, 534, 890, 1247],
-};
 
 export function AnimalArt({
   animal,
@@ -109,7 +60,8 @@ export function AnimalArt({
     return () => timers.forEach(window.clearTimeout);
   }, [gesture, reducedMotion]);
   const pose = gesture ? frame : happy ? 1 : 0;
-  const crop = poses[animal][pose]!;
+  const name = `${animal}${pose}` as Extract<SpriteName, `${Animal}${number}`>;
+  const sprite = sprites[name];
   const scale = animal === 'bear' ? 0.54 : 0.52;
   return (
     <svg
@@ -122,12 +74,11 @@ export function AnimalArt({
     >
       <ellipse cx="80" cy="191" rx="49" ry="5" fill="#37593c" opacity=".13" />
       <PlushSprite
-        atlas={animal === 'squirrel' ? 'squirrel' : 'friends'}
-        crop={crop}
-        x={80 - (bodyCenters[animal][pose]! - crop[0]) * scale}
-        y={193 - crop[3] * scale}
-        width={crop[2] * scale}
-        height={crop[3] * scale}
+        name={name}
+        x={80 - sprite.anchor * scale}
+        y={193 - sprite.size[1] * scale}
+        width={sprite.size[0] * scale}
+        height={sprite.size[1] * scale}
       />
     </svg>
   );
@@ -148,7 +99,7 @@ export function BasketArt({
           <path d="M0 89Q105 110 210 89V180H0Z" />
         </clipPath>
       </defs>
-      <PlushSprite atlas="props" crop={[35, 568, 460, 412]} width={210} height={180} />
+      <PlushSprite name="basket" width={210} height={180} />
       {foods.map((food, i) => {
         const rear = foods.length > 3 && i < 3;
         const count = rear ? 3 : Math.min(3, foods.length > 3 ? foods.length - 3 : foods.length);
@@ -166,7 +117,7 @@ export function BasketArt({
         );
       })}
       <g clipPath={`url(#${id})`}>
-        <PlushSprite atlas="props" crop={[35, 568, 460, 412]} width={210} height={180} />
+        <PlushSprite name="basket" width={210} height={180} />
       </g>
     </svg>
   );
@@ -206,51 +157,92 @@ export function UmbrellaArt({
         </clipPath>
       </defs>
       <g clipPath={`url(#${id})`}>
-        <PlushSprite
-          atlas="props"
-          crop={[515, 540, 506, 453]}
-          width={600}
-          height={330}
-          preserveAspectRatio="none"
-        />
+        <PlushSprite name="umbrella" width={600} height={330} preserveAspectRatio="none" />
       </g>
     </svg>
   );
 }
 
 export function BlanketArt({ color: _color, ...props }: ArtProps & { color?: Blanket }) {
+  return <PlushSprite name="blanket" preserveAspectRatio="none" {...props} />;
+}
+export function ButterflyArt({ animated = false }: { animated?: boolean } = {}) {
+  if (!animated) return <PlushSprite name="butterfly" />;
   return (
-    <PlushSprite atlas="props" crop={[1002, 705, 534, 250]} preserveAspectRatio="none" {...props} />
+    <svg viewBox="0 0 520 480" className="butterfly-puppet" aria-hidden="true">
+      <g className="butterfly-wing butterfly-wing-left" data-butterfly-part="left-wing">
+        <PlushSprite
+          name="butterflyLeft"
+          x={-30.4}
+          y={72}
+          width={347.52}
+          height={398.2}
+          preserveAspectRatio="none"
+        />
+      </g>
+      <g className="butterfly-wing butterfly-wing-right" data-butterfly-part="right-wing">
+        <PlushSprite
+          name="butterflyRight"
+          x={203.36}
+          y={72}
+          width={347.52}
+          height={398.2}
+          preserveAspectRatio="none"
+        />
+      </g>
+      <g data-butterfly-part="body">
+        <PlushSprite name="butterflyBody" x={38.6} y={34} width={434.4} height={434.4} />
+      </g>
+    </svg>
   );
 }
-export function ButterflyArt() {
-  return <PlushSprite atlas="small" crop={[0, 836, 440, 418]} />;
+
+export type FrogPose = 'idle' | 'crouch' | 'leap' | 'land';
+
+function FrogPoseArt({ pose }: { pose: FrogPose }) {
+  if (pose === 'idle') return <PlushSprite name="frog" width={430} height={370} />;
+  const placements = {
+    crouch: { name: 'frogCrouch', x: -18, y: 29, width: 448, height: 352 },
+    leap: { name: 'frogLeap', x: -41, y: -15, width: 520, height: 400 },
+    land: { name: 'frogLand', x: 0, y: 45, width: 451.4, height: 333 },
+  } as const;
+  return <PlushSprite {...placements[pose]} />;
 }
-export function FrogArt() {
-  return <PlushSprite atlas="small" crop={[440, 850, 430, 370]} />;
+
+export function FrogArt({ animated = false, pose }: { animated?: boolean; pose?: FrogPose } = {}) {
+  const poses: readonly FrogPose[] = pose
+    ? [pose]
+    : animated
+      ? ['idle', 'crouch', 'leap', 'land']
+      : ['idle'];
+  return (
+    <svg
+      viewBox="0 0 430 370"
+      className={animated && !pose ? 'frog-poses' : undefined}
+      overflow="visible"
+      aria-hidden="true"
+    >
+      {poses.map((frame) => (
+        <g key={frame} className={`frog-pose frog-pose-${frame}`} data-frog-pose={frame}>
+          <FrogPoseArt pose={frame} />
+        </g>
+      ))}
+    </svg>
+  );
 }
 export function AcornArt() {
-  return <PlushSprite atlas="small" crop={[890, 836, 364, 418]} />;
+  return <PlushSprite name="acorn" />;
 }
 
 export function DiscoveryArt({ item }: { item: Discovery }) {
-  const crops: Record<Discovery, Crop> = {
-    butterfly: [0, 62, 512, 391],
-    frog: [512, 100, 518, 353],
-    acorn: [1040, 80, 496, 373],
-  };
-  return <PlushSprite atlas="explore" crop={crops[item]} />;
+  const names = { butterfly: 'flowers', frog: 'pond', acorn: 'stump' } as const;
+  return <PlushSprite name={names[item]} />;
 }
 
 export function WeatherArt({ weather }: { weather: Weather }) {
-  return (
-    <PlushSprite
-      atlas="explore"
-      crop={weather === 'sun' ? [12, 475, 488, 475] : [529, 484, 494, 475]}
-    />
-  );
+  return <PlushSprite name={weather} />;
 }
 
 export function ForestArt() {
-  return <PlushSprite atlas="explore" crop={[1040, 500, 496, 465]} />;
+  return <PlushSprite name="forest" />;
 }

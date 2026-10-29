@@ -1,5 +1,5 @@
 import type { Weather } from '../game/model';
-import { plushAssets } from './PlushArt';
+import { forestUrl } from '../assets/plush/artwork';
 
 export function Landscape({
   weather = 'sun',
@@ -15,12 +15,7 @@ export function Landscape({
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
     >
-      <image
-        href={plushAssets.forest}
-        width="1200"
-        height="520"
-        preserveAspectRatio="xMidYMid slice"
-      />
+      <image href={forestUrl} width="1200" height="520" preserveAspectRatio="xMidYMid slice" />
       {weather === 'rain' && <rect width="1200" height="520" fill="#668b9a" opacity=".12" />}
     </svg>
   );

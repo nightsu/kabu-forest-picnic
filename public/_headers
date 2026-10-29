@@ -1,0 +1,8 @@
+# Used by Cloudflare Pages if the same dist/ is hosted there.
+# GitHub Pages manages its own response headers.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/
+  Cache-Control: no-cache
+/*.html
+  Cache-Control: no-cache

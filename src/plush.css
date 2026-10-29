@@ -259,24 +259,27 @@ body {
   width: 100%;
   height: 100%;
 }
-.friend-motion,
-.butterfly-wings {
+.friend-motion {
   display: block;
   width: 100%;
   height: 100%;
   transform-origin: 50% 85%;
 }
-.friend-motion > svg,
-.butterfly-wings > svg {
+.friend-motion > svg {
   width: 100%;
   height: 100%;
 }
 .friend-butterfly .friend-playing {
   animation: butterfly-explore 2.8s ease-in-out both;
 }
-.friend-butterfly.responding .butterfly-wings {
-  transform-origin: center;
-  animation: wing-beat 0.16s ease-in-out 18 alternate;
+.butterfly-wing {
+  transform-origin: 260px 270px;
+}
+.friend-butterfly.responding .butterfly-wing-left {
+  animation: wing-left 0.28s ease-in-out 10 both;
+}
+.friend-butterfly.responding .butterfly-wing-right {
+  animation: wing-right 0.28s ease-in-out 10 both;
 }
 .friend-frog .friend-playing {
   animation: frog-leap 1.4s ease-in-out both;
@@ -335,12 +338,95 @@ body {
       rotate(-10deg);
   }
 }
-@keyframes wing-beat {
-  from {
-    transform: scaleX(0.65);
+@keyframes wing-left {
+  0%,
+  100% {
+    transform: scaleX(1) rotate(0);
   }
-  to {
-    transform: scaleX(1);
+  50% {
+    transform: scaleX(0.38) rotate(-8deg);
+  }
+}
+@keyframes wing-right {
+  0%,
+  100% {
+    transform: scaleX(1) rotate(0);
+  }
+  50% {
+    transform: scaleX(0.46) rotate(7deg);
+  }
+}
+.frog-poses .frog-pose {
+  opacity: 0;
+  animation-duration: 1.4s;
+  animation-timing-function: steps(1, end);
+  animation-fill-mode: both;
+}
+.frog-poses .frog-pose-idle {
+  opacity: 1;
+  animation-name: frog-idle-pose;
+}
+.frog-poses .frog-pose-crouch {
+  animation-name: frog-crouch-pose;
+}
+.frog-poses .frog-pose-leap {
+  animation-name: frog-leap-pose;
+}
+.frog-poses .frog-pose-land {
+  animation-name: frog-land-pose;
+}
+@keyframes frog-idle-pose {
+  0% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0;
+  }
+  94%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes frog-crouch-pose {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  21% {
+    opacity: 0;
+  }
+  84% {
+    opacity: 1;
+  }
+  94%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes frog-leap-pose {
+  0% {
+    opacity: 0;
+  }
+  21% {
+    opacity: 1;
+  }
+  66%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes frog-land-pose {
+  0% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  84%,
+  100% {
+    opacity: 0;
   }
 }
 @keyframes frog-leap {
@@ -349,19 +435,19 @@ body {
     transform: translate(0, 0) scale(1);
   }
   10% {
-    transform: translate(0, 3px) scale(1.16, 0.8);
+    transform: translate(0, 3px);
   }
   30% {
-    transform: translate(-16px, calc(var(--jump-height) * -0.75)) scale(0.95, 1.08) rotate(-5deg);
+    transform: translate(-16px, calc(var(--jump-height) * -0.75)) rotate(-3deg);
   }
   46% {
-    transform: translate(-24px, calc(var(--jump-height) * -1)) scale(1) rotate(-2deg);
+    transform: translate(-24px, calc(var(--jump-height) * -1)) rotate(-1deg);
   }
   70% {
-    transform: translate(0, 3px) scale(1.17, 0.8);
+    transform: translate(0, 3px);
   }
   85% {
-    transform: translate(0, -5px) scale(0.98, 1.04);
+    transform: translate(0, -5px);
   }
 }
 @keyframes frog-shadow {
@@ -488,9 +574,16 @@ body {
   .weather-art,
   .plate-food,
   .friend-motion,
-  .butterfly-wings,
+  .butterfly-wing,
+  .frog-poses .frog-pose,
   .friend-shadow,
   .frog-ripple {
-    animation: none;
+    animation: none !important;
+  }
+  .frog-poses .frog-pose {
+    opacity: 0;
+  }
+  .frog-poses .frog-pose-idle {
+    opacity: 1;
   }
 }

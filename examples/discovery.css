@@ -1,0 +1,91 @@
+.friend-tabs {
+  margin: 24px 0;
+}
+.friend-tabs button {
+  background: #e4eddb;
+  color: #456b50;
+  border: 2px solid transparent;
+}
+.friend-tabs button[aria-pressed='true'] {
+  border-color: #456b50;
+  background: #d0e3c4;
+}
+.discovery-demo-stage {
+  position: relative;
+  height: 290px;
+  overflow: hidden;
+  container-type: size;
+  --flight-width: min(120px, 34cqw);
+  --flight-rise: 105px;
+  --jump-height: 115px;
+}
+.discovery-demo-stage .friend-actor {
+  position: absolute;
+  left: 8%;
+  bottom: 14%;
+  width: 120px;
+  height: 120px;
+}
+.discovery-demo-stage .friend-frog {
+  left: calc(50% - 60px);
+}
+.legacy-wing,
+.legacy-wing > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.responding .legacy-wing {
+  animation: legacy-flap 0.16s ease-in-out 18 alternate;
+}
+@keyframes legacy-flap {
+  from {
+    transform: scaleX(0.65);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.legacy .friend-frog .friend-playing {
+  animation-name: legacy-frog-leap;
+}
+@keyframes legacy-frog-leap {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  10% {
+    transform: translate(0, 3px) scale(1.16, 0.8);
+  }
+  30% {
+    transform: translate(-16px, calc(var(--jump-height) * -0.75)) scale(0.95, 1.08) rotate(-5deg);
+  }
+  46% {
+    transform: translate(-24px, calc(var(--jump-height) * -1)) scale(1) rotate(-2deg);
+  }
+  70% {
+    transform: translate(0, 3px) scale(1.17, 0.8);
+  }
+  85% {
+    transform: translate(0, -5px) scale(0.98, 1.04);
+  }
+}
+label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+select {
+  min-height: 48px;
+  font: inherit;
+  color: inherit;
+  border: 1px solid #7b957d;
+  border-radius: 12px;
+  background: #fffdf5;
+  padding: 8px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .responding .legacy-wing {
+    animation: none;
+  }
+}

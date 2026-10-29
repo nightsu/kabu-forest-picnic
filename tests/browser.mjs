@@ -109,6 +109,7 @@ try {
     await page.screenshot({ path: join(output, `forest-${viewport.width}.png`), fullPage: true });
     await page.getByRole('button', { name: '找找花丛里的朋友' }).click();
     await page.getByRole('button', { name: '找找花丛里的朋友' }).click();
+    await page.locator('.discovery-butterfly .friend-playing').waitFor();
     assert.equal(await page.locator('.discovery-butterfly .friend-playing').count(), 1);
     await page.getByRole('button', { name: '看看池塘里的朋友' }).click();
     await page.getByRole('button', { name: '敲敲树洞' }).click();
@@ -379,10 +380,15 @@ try {
   const fur = await meal.evaluate(async () => {
     const results = [];
     for (const [animal, x, y] of [
-      ['bear', 196, 480],
-      ['squirrel', 164, 780],
+      ['bear', 151, 64],
+      ['squirrel', 109, 56],
     ]) {
-      const source = document.querySelector(`.animal-${animal} image`).getAttribute('href');
+      const element = document.querySelector(`.animal-${animal} image`);
+      const frame = element.parentElement;
+      const [regionX, regionY] = frame.getAttribute('viewBox').split(' ').map(Number);
+      const sampleX = regionX + x - Number(frame.getAttribute('x'));
+      const sampleY = regionY + y - Number(frame.getAttribute('y'));
+      const source = element.getAttribute('href');
       const image = new Image();
       image.src = source;
       await image.decode();
@@ -391,7 +397,7 @@ try {
       canvas.height = image.naturalHeight;
       const context = canvas.getContext('2d');
       context.drawImage(image, 0, 0);
-      results.push([...context.getImageData(x, y, 1, 1).data]);
+      results.push([...context.getImageData(sampleX, sampleY, 1, 1).data]);
     }
     return results;
   });

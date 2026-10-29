@@ -9,7 +9,7 @@ export class VoicePlayer {
   private current: { id: string; clip: Clip } | null = null;
 
   constructor(
-    private readonly baseUrl: string,
+    private readonly resolveUrl: (id: string) => string,
     private readonly createClip: CreateClip = (url) => new Audio(url),
   ) {}
 
@@ -18,7 +18,7 @@ export class VoicePlayer {
     if (!id) return;
     if (this.current?.id === id) return;
     this.stop();
-    const clip = this.createClip(`${this.baseUrl}audio/${id}.mp3`);
+    const clip = this.createClip(this.resolveUrl(id));
     clip.volume = 0.85;
     this.current = { id, clip };
     const finish = () => {

@@ -12,6 +12,7 @@ const browser = await chromium.launch({
 });
 
 async function trace(locator, item) {
+  await locator.locator('.friend-playing').waitFor();
   const result = await locator.evaluate(async (button) => {
     const actor = button.querySelector('.friend-playing');
     const scene = button.closest('.picnic-scene').getBoundingClientRect();
@@ -83,8 +84,18 @@ try {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
     const errors = [];
+    const motionRequests = [];
+    page.on('request', (request) => {
+      if (/\/motion(?:-[\w-]+)?\.webp(?:\?.*)?$/.test(request.url()))
+        motionRequests.push(request.url());
+    });
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(base);
+    assert.deepEqual(
+      motionRequests,
+      [],
+      'Optional detailed motion artwork is not loaded on the first screen',
+    );
     await page.getByRole('button', { name: '装入苹果', exact: true }).click();
     await page.getByRole('button', { name: '出发去森林', exact: true }).click();
     for (const [item, label] of [
@@ -104,6 +115,52 @@ try {
           animation.currentTime = time;
         }
       });
+      if (item === 'butterfly') {
+        const parts = await button.locator('[data-butterfly-part]').evaluateAll((elements) =>
+          elements.map((element) => ({
+            part: element.getAttribute('data-butterfly-part'),
+            transform: getComputedStyle(element).transform,
+          })),
+        );
+        assert.equal(parts.length, 3, 'Both complete wings and the body are present');
+        assert.equal(
+          parts.find((part) => part.part === 'body').transform,
+          'none',
+          'Flapping does not squash the body',
+        );
+        assert.notEqual(parts[0].transform, parts[1].transform, 'Wings move independently');
+      }
+      if (item === 'frog') {
+        for (const [fraction, expected] of [
+          [0.12, 'crouch'],
+          [0.42, 'leap'],
+          [0.74, 'land'],
+          [0.98, 'idle'],
+        ]) {
+          await button.evaluate((button, fraction) => {
+            for (const animation of button
+              .querySelector('.friend-actor')
+              .getAnimations({ subtree: true })) {
+              animation.pause();
+              animation.currentTime = fraction * 1400;
+            }
+          }, fraction);
+          const visible = await button
+            .locator('[data-frog-pose]')
+            .evaluateAll((poses) =>
+              poses
+                .filter((pose) => getComputedStyle(pose).opacity === '1')
+                .map((pose) => pose.getAttribute('data-frog-pose')),
+            );
+          assert.deepEqual(visible, [expected], 'Exactly one complete frog pose is visible');
+        }
+        await button.evaluate((button) => {
+          for (const animation of button
+            .querySelector('.friend-actor')
+            .getAnimations({ subtree: true }))
+            animation.currentTime = 588;
+        });
+      }
       await page.screenshot({
         path: join(output, `discover-${item}-motion-${viewport.width}.png`),
       });
@@ -115,6 +172,30 @@ try {
       });
       await button.click();
       await trace(button, item);
+      const distorted = await button.locator('svg[width][height]').evaluateAll((elements) =>
+        elements
+          .filter(
+            (element) =>
+              Math.abs(
+                parseFloat(getComputedStyle(element).width) - Number(element.getAttribute('width')),
+              ) > 0.1 ||
+              Math.abs(
+                parseFloat(getComputedStyle(element).height) -
+                  Number(element.getAttribute('height')),
+              ) > 0.1,
+          )
+          .map((element) => ({
+            width: element.getAttribute('width'),
+            height: element.getAttribute('height'),
+            cssWidth: getComputedStyle(element).width,
+            cssHeight: getComputedStyle(element).height,
+          })),
+      );
+      assert.deepEqual(
+        distorted,
+        [],
+        'Picnic companion styling must preserve every nested sprite placement',
+      );
     }
     await page.screenshot({ path: join(output, `discover-rest-${viewport.width}.png`) });
     await page.getByRole('button', { name: '去野餐', exact: true }).click();
@@ -141,7 +222,41 @@ try {
     await page.locator('.friend-playing').evaluate((el) => getComputedStyle(el).animationName),
     'none',
   );
+  assert.equal(await page.locator('[data-butterfly-part]').count(), 3);
+  for (const wing of await page.locator('.butterfly-wing').all()) {
+    assert.equal(await wing.evaluate((el) => getComputedStyle(el).animationName), 'none');
+  }
+  await page.getByRole('button', { name: '看看池塘里的朋友', exact: true }).click();
+  await page.locator('.frog-poses').waitFor();
+  const reducedPoses = await page
+    .locator('[data-frog-pose]')
+    .evaluateAll((poses) =>
+      poses
+        .filter((pose) => getComputedStyle(pose).opacity === '1')
+        .map((pose) => pose.getAttribute('data-frog-pose')),
+    );
+  assert.deepEqual(reducedPoses, ['idle'], 'Reduced motion keeps one stable frog pose');
   await reduced.close();
+  const fallback = await browser.newContext();
+  const offlineArt = await fallback.newPage();
+  const fallbackErrors = [];
+  offlineArt.on('pageerror', (error) => fallbackErrors.push(error.message));
+  await offlineArt.route(/\/motion(?:-[\w-]+)?\.webp(?:\?.*)?$/, (route) => route.abort());
+  await offlineArt.goto(base);
+  await offlineArt.getByRole('button', { name: '装入苹果', exact: true }).click();
+  await offlineArt.getByRole('button', { name: '出发去森林', exact: true }).click();
+  await offlineArt.getByRole('button', { name: '找找花丛里的朋友', exact: true }).click();
+  await offlineArt.locator('.discovery-butterfly .friend-playing').waitFor();
+  assert.equal(
+    await offlineArt.locator('[data-butterfly-part]').count(),
+    0,
+    'Failed detailed art falls back to the original intact butterfly',
+  );
+  await offlineArt.getByRole('button', { name: '看看池塘里的朋友', exact: true }).click();
+  await offlineArt.locator('.discovery-frog .friend-playing').waitFor();
+  assert.equal(await offlineArt.locator('.frog-poses').count(), 0);
+  assert.deepEqual(fallbackErrors, [], 'Missing optional motion art never breaks the game');
+  await fallback.close();
   console.log('PASS replayable exploration, picnic companions, gift placement, and reduced motion');
 } finally {
   await browser.close();

@@ -12,11 +12,17 @@
     "format": "vp fmt",
     "test": "vp test run",
     "test:e2e": "node tests/browser.mjs",
+    "test:discovery": "node tests/discovery-browser.mjs",
     "deploy": "node scripts/deploy.mjs",
     "audio:plan": "node scripts/generate-voices.mjs",
     "audio:generate": "node scripts/generate-voices.mjs --generate",
     "audio:check": "node scripts/verify-audio.mjs",
-    "test:audio": "node tests/audio-browser.mjs"
+    "test:audio": "node tests/audio-browser.mjs",
+    "art:build": "node scripts/build-art.mjs",
+    "predev": "npm run art:build",
+    "prebuild": "npm run art:build",
+    "precheck": "npm run art:build",
+    "pretest": "npm run art:build"
   },
   "dependencies": {
     "motion": "14.0.0",
@@ -29,6 +35,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.1",
     "playwright": "1.63.0",
+    "sharp": "^0.35.5",
     "typescript": "7.0.2",
     "vite-plus": "1.0.0"
   },

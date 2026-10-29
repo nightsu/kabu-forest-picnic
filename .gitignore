@@ -10,3 +10,6 @@ playwright-report/
 .vite-plus/
 
 *.key
+
+# Rebuilt from art/source and art/recipe.json by the npm lifecycle scripts.
+src/assets/plush/

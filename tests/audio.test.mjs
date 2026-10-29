@@ -19,13 +19,16 @@ function setup({ denied = false } = {}) {
     clips.push(clip);
     return clip;
   };
-  return { clips, player: new VoicePlayer('/kabu-forest-picnic/', create) };
+  return {
+    clips,
+    player: new VoicePlayer((id) => `/kabu-forest-picnic/assets/${id}-content-hash.mp3`, create),
+  };
 }
 describe('recorded voice playback', () => {
   it('plays deployed files under the project base path', () => {
     const { player, clips } = setup();
     player.speak(lines[0].message);
-    expect(clips[0].src).toBe(`/kabu-forest-picnic/audio/${lines[0].id}.mp3`);
+    expect(clips[0].src).toBe(`/kabu-forest-picnic/assets/${lines[0].id}-content-hash.mp3`);
     expect(clips[0].play).toHaveBeenCalledOnce();
   });
   it('replaces the current voice immediately, without accumulating a queue', () => {
